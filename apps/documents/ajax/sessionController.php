@@ -18,55 +18,43 @@ class SessionController extends Controller{
 		$uid = self::preDispatchGuest();
 		$uid = substr(@$_POST['name'], 0, 16) .' '. $uid;
 		$token = @$args['token'];
-		$file = File::getByShareToken($token);
-		self::join($uid, $file);
-	}
-
-	public static function renameDocument($args){
-		$fileId = intval(@$args['file_id']);
-		$name = @$_POST['name'];
-		$file = new File($fileId);
-		$l = new \OC_L10n('documents');
-
-		if (isset($name) && $file->getPermissions() & \OCP\PERMISSION_UPDATE) {
-			if ($file->renameTo($name)) {
-				// TODO: propagate to other clients
-				\OCP\JSON::success();
-				return;
-			}
+		try {
+			$file = File::getByShareToken($token);
+			self::join($uid, $file);
+		} catch (\Exception $e){
+			Helper::warnLog('Starting a session failed. Reason: ' . $e->getMessage());
+			\OCP\JSON::error();
+			exit();
 		}
-		\OCP\JSON::error(array(
-			'message' => $l->t('You don\'t have permission to rename this document')
-		));
 	}
 
 	public static function joinAsUser($args){
 		$uid = self::preDispatch();
 		$fileId = intval(@$args['file_id']);
-		$file = new File($fileId);
 		
-		if ($file->getPermissions() & \OCP\PERMISSION_UPDATE) {
-			self::join($uid, $file);	
-		} else {
-			\OCP\JSON::success(array(
-				'permissions' => $file->getPermissions(),
-				'id' => $fileId
-			));
-		}
+		try {
+			$file = new File($fileId);
 		
-		exit();
-	}
-	
-	protected static function join($uid, $file){
-		try{
-			$session = Db_Session::start($uid, $file);
-			\OCP\JSON::success($session);
+			if ($file->getPermissions() & \OCP\PERMISSION_UPDATE) {
+				self::join($uid, $file);	
+			} else {
+				\OCP\JSON::success(array(
+					'permissions' => $file->getPermissions(),
+					'id' => $fileId
+				));
+			}
 			exit();
 		} catch (\Exception $e){
 			Helper::warnLog('Starting a session failed. Reason: ' . $e->getMessage());
 			\OCP\JSON::error();
 			exit();
 		}
+	}
+	
+	protected static function join($uid, $file){
+			$session = Db_Session::start($uid, $file);
+			\OCP\JSON::success($session);
+			exit();
 	}
 
 	/**
@@ -102,7 +90,6 @@ class SessionController extends Controller{
 				self::preDispatchGuest();
 			}
 			
-			
 			list($view, $path) = $file->getOwnerViewAndPath();
 
 			$isWritable = ($view->file_exists($path) && $view->isUpdatable($path)) || $view->isCreatable($path);
@@ -127,8 +114,7 @@ class SessionController extends Controller{
 			// Active users except current user
 			$memberCount = count($memberIds) - 1;
 			
-			if ($view->file_exists($path)){
-				
+			if ($view->file_exists($path)){		
 				
 				$proxyStatus = \OC_FileProxy::$enabled;
 				\OC_FileProxy::$enabled = false;	
@@ -139,14 +125,21 @@ class SessionController extends Controller{
 					// Original file was modified externally. Save to a new one
 					$path = Helper::getNewFileName($view, $path, '-conflict');
 				}
+				
+				$mimetype = $view->getMimeType($path);
+			} else {
+				$mimetype = Storage::MIMETYPE_LIBREOFFICE_WORDPROCESSOR;
 			}
 			
-			if ($view->file_put_contents($path, $content)){
+			$data = Filter::write($content, $mimetype);
+			
+			if ($view->file_put_contents($path, $data['content'])){
 				// Not a last user
 				if ($memberCount>0){
 					// Update genesis hash to prevent conflicts
 					Helper::debugLog('Update hash');
-					$session->updateGenesisHash($esId, sha1($content));
+					
+					$session->updateGenesisHash($esId, sha1($data['content']));
 				} else {
 					// Last user. Kill session data
 					Db_Session::cleanUp($esId);

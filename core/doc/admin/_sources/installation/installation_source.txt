@@ -9,32 +9,34 @@ Prerequisites
 
 To run ownCloud, your web server must have the following installed:
 
-* php5 (>= 5.3.3, minimum recommended 5.4)
-* PHP module zip
+* PHP (>= 5.3.3, minimum recommended 5.4)
+* PHP module ctype
 * PHP module dom
+* PHP module GD
+* PHP module iconv
+* PHP module JSON
 * PHP module libxml
 * PHP module mb multibyte
-* PHP module ctype
-* PHP module JSON
-* PHP module GD
-* PHP module zlib
-* PHP module iconv
 * PHP module SimpleXML
+* PHP module zip
+* PHP module zlib
+
+Database connectors (pick at least one):
+
+* PHP module sqlite (>= 3)
+* PHP module mysql
+* PHP module pgsql (requires PostgreSQL >= 9.0)
 
 And as *optional* dependencies:
 
-* PHP module intl
-* PHP module mcrypt
-* PHP module bz2
-* PHP module openssl
-* PHP module sqlite (>= 3)
-* PHP module mysql
-* PHP module pgsql
+* PHP module bz2 (recommended, required for extraction of apps)
+* PHP module curl (highly recommended, some functionality depends on this)
 * PHP module exif (for image rotation in pictures app)
+* PHP module fileinfo (highly recommended, increases file analysis performance)
+* PHP module intl (increases language translation performance)
 * PHP module ldap (for ldap integration)
-* PHP module curl
-* curl
-* libcurl3
+* PHP module mcrypt (increases file encryption performance)
+* PHP module openssl (required for accessing HTTPS resources)
 
 For performance increase (*optional* / select one of the following):
 
@@ -51,12 +53,12 @@ For preview generation (*optional*):
 For external storage (*optional*):
 
 * smbclient (for SMB storage)
-* php5-ftp (for FTP storage)
+* PHP module ftp (for FTP storage)
 
 Please check your distribution, operating system or hosting partner documentation on how to install/enable
 these modules.
 
-The curl packages are needed for some apps (e.g. http user authentication)
+The curl PHP module is required for some apps (e.g. http user authentication).
 
 If you are running Ubuntu 10.04 LTS you will need to update your PHP from
 this `PHP PPA`_:
@@ -130,7 +132,6 @@ Example Apache 2.4:
     <Directory /path/to/your/owncloud/install>
         Options Indexes FollowSymLinks MultiViews
         AllowOverride All
-        Order allow,deny
         Require all granted
     </Directory>
 
@@ -161,6 +162,11 @@ Nginx Configuration
 -  Make sure your SSL certificates are readable by the server (see `http://wiki.nginx.org/HttpSslModule`_).
 
 .. code-block:: python
+
+    upstream php-handler {
+            server 127.0.0.1:9000; 
+            #server unix:/var/run/php5-fpm.sock;
+    }
 
     server {
             listen 80;
@@ -219,8 +225,7 @@ Nginx Configuration
                     fastcgi_param SCRIPT_FILENAME $document_root$1;
                     fastcgi_param PATH_INFO $2;
                     fastcgi_param HTTPS on;
-                    fastcgi_pass 127.0.0.1:9000;
-                    # Or use unix-socket with 'fastcgi_pass unix:/var/run/php5-fpm.sock;'
+                    fastcgi_pass php-handler;
             }
 
             # Optional: set long EXPIRES header on static assets

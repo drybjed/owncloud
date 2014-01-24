@@ -26,7 +26,7 @@ class DocumentController extends Controller{
 		$content = base64_decode(self::ODT_TEMPLATE);
 		if (class_exists('\OC\Files\Type\TemplateManager')){
 			$manager = \OC_Helper::getFileTemplateManager();
-			$templateContent = $manager->getTemplate('application/vnd.oasis.opendocument.text');
+			$templateContent = $manager->getTemplate(Storage::MIMETYPE_LIBREOFFICE_WORDPROCESSOR);
 			if ($templateContent){
 				$content = $templateContent;
 			}
@@ -54,6 +54,25 @@ class DocumentController extends Controller{
 		$filename = isset($sessionData['genesis_url']) ? $sessionData['genesis_url'] : '';
 		$download = new Download($sessionData['owner'], $filename);
 		$download->sendResponse();
+	}
+	
+
+	public static function rename($args){
+		$fileId = intval(@$args['file_id']);
+		$name = @$_POST['name'];
+		$file = new File($fileId);
+		$l = new \OC_L10n('documents');
+
+		if (isset($name) && $file->getPermissions() & \OCP\PERMISSION_UPDATE) {
+			if ($file->renameTo($name)) {
+				// TODO: propagate to other clients
+				\OCP\JSON::success();
+				return;
+			}
+		}
+		\OCP\JSON::error(array(
+			'message' => $l->t('You don\'t have permission to rename this document')
+		));
 	}
 
 	/**

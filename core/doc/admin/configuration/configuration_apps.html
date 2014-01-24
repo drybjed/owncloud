@@ -29,8 +29,8 @@
     <script type="text/javascript" src="../_static/bootstrap.js"></script>
     <link rel="top" title="ownCloud Administrators Manual 6.0 documentation" href="../index.html" />
     <link rel="up" title="Configuration" href="index.html" />
-    <link rel="next" title="Automatic Configuration" href="configuration_automation.html" />
-    <link rel="prev" title="3rd-Party Configuration" href="configuration_3rdparty.html" />
+    <link rel="next" title="User Management" href="configuration_users.html" />
+    <link rel="prev" title="Configuration" href="index.html" />
 <script type="text/javascript">
 (function () {
   /**
@@ -118,13 +118,14 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Configuration</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="auth_ldap.html">User Authentication with LDAP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background_jobs.html">Background Jobs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="configuration_3rdparty.html">3rd-Party Configuration</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="">Apps Configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="configuration_users.html">User Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth_ldap.html">User Authentication with LDAP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background_jobs.html">Background Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration_3rdparty.html">3rd-Party Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_automation.html">Automatic Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_custom_clients.html">Custom Client Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_database.html">Database Configuration</a></li>
@@ -160,10 +161,22 @@
 						
   <div class="section" id="apps-configuration">
 <h1>Apps Configuration<a class="headerlink" href="#apps-configuration" title="Permalink to this headline">¶</a></h1>
-<p>After you have installed ownCloud you might realize that it would be nice to
+<p>After you have installed ownCloud, you might realize that it would be nice to
 provide an additional function on top of the core functionality in your ownCloud installation.</p>
-<p>The first step should be to check out the <a class="reference external" href="http://apps.owncloud.com/">ownCloud apps store</a>. There you will find a
-lot of ready-to-use apps provided by the ownCloud community.</p>
+<p>With ownCloud installation, you will find some apps enabled by default. To see which applications
+are enabled, click on Apps button on the web interface navigation to go into applications page:</p>
+<div class="figure">
+<img alt="../_images/oc_admin_app_page.png" src="../_images/oc_admin_app_page.png" />
+</div>
+<p>Administrator application page</p>
+<p>In this page, you can enable or disable applications simply by clicking on their names.
+Enabled applications will be shown in <strong>bold</strong> while disabled ones will be shown in normal font.
+If the app is not developed by ownCloud, it will have the <em>3rd party</em> notice next to it. To see what an
+application does, clicking on its name will show a description on the right side of the same page.</p>
+<p>To install new apps, you can use <em>More apps</em> button or check out the <a class="reference external" href="http://apps.owncloud.com/">ownCloud apps store</a>.
+There you will find a lot of ready-to-use apps provided by the ownCloud community.</p>
+<p>If you would like to add your own app, please use <em>Add your App...</em> button on the same page. This will redirect you to
+our <a class="reference external" href="http://owncloud.org/dev">Developer Center</a>.</p>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <p>Parameters are set in the <tt class="file docutils literal"><span class="pre">config/config.php</span></tt> inside the <strong>$CONFIG</strong> array.</p>

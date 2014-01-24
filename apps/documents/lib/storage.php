@@ -25,10 +25,11 @@
 namespace OCA\Documents;
 
 class Storage {
+	const MIMETYPE_LIBREOFFICE_WORDPROCESSOR = 'application/vnd.oasis.opendocument.text';
 
 	public static function getDocuments() {
 		$list = array_filter(
-				\OCP\Files::searchByMime('application/vnd.oasis.opendocument.text'),
+				self::searchDocuments(),
 				function($item){
 					//filter Deleted
 					if (strpos($item['path'], '_trashbin')===0){
@@ -39,6 +40,20 @@ class Storage {
 		);
 		
 		return $list;
+	}
+	
+	public static function resolvePath($fileId){
+		$list = array_filter(
+				self::searchDocuments(),
+				function($item) use ($fileId){
+					return intval($item['fileid'])==$fileId;
+				}
+		);
+		if (count($list)>0){
+			$item = current($list);
+			return $item['path'];
+		}
+		return false;
 	}
 	
 	/**
@@ -67,5 +82,20 @@ class Storage {
 		}
 		
 		Db_Session::cleanUp($session['es_id']);
+	}
+	
+	protected static function searchDocuments(){
+		$documents = array();
+		foreach (self::getSupportedMimetypes() as $mime){
+			$documents = array_merge($documents, \OCP\Files::searchByMime($mime));
+		}
+		return $documents;
+	}
+	
+	protected static function getSupportedMimetypes(){
+		return array_merge(
+			array(self::MIMETYPE_LIBREOFFICE_WORDPROCESSOR),
+			Filter::getAll()	
+		);
 	}
 }

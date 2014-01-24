@@ -14,6 +14,7 @@ if (is_array($linkItem) && isset($linkItem['uid_owner'])) {
 	// seems to be a valid share
 	$rootLinkItem = \OCP\Share::resolveReShare($linkItem);
 	$owner = $rootLinkItem['uid_owner'];
+	OCP\JSON::checkUserExists($owner);
 	OC_Util::tearDownFS();
 	OC_Util::setupFS($owner);
 	\OC_User::setIncognitoMode(true);
@@ -22,7 +23,13 @@ if (is_array($linkItem) && isset($linkItem['uid_owner'])) {
 
 	list($owner, $img) = explode('/', $_GET['file'], 2);
 	if ($owner !== OCP\User::getUser()) {
-		list(, $img) = explode('/', $img, 2);
+		OCP\JSON::checkUserExists($owner);
+		OC_Util::setupFS($owner);
+		$view = new \OC\Files\View('/' . $owner . '/files');
+		// second part is the (duplicated) share name
+		list($folderId, , $img) = explode('/', $img, 3);
+		$sharedFolder = $view->getPath($folderId);
+		$img = $sharedFolder . '/' . $img;
 	}
 }
 
