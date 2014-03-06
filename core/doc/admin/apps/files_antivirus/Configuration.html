@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Configuration &mdash; ownCloud Administrators Manual 6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap.js"></script>
+    <link rel="top" title="ownCloud Administrators Manual 6.0 documentation" href="../../index.html" />
+<script type="text/javascript">
+(function () {
+  /**
+   * Patch TOC list.
+   *
+   * Will mutate the underlying span to have a correct ul for nav.
+   *
+   * @param $span: Span containing nested UL's to mutate.
+   * @param minLevel: Starting level for nested lists. (1: global, 2: local).
+   */
+  var patchToc = function ($ul, minLevel) {
+    var findA;
+
+    // Find all a "internal" tags, traversing recursively.
+    findA = function ($elem, level) {
+      var level = level || 0,
+        $items = $elem.find("> li > a.internal, > ul, > li > ul");
+
+      // Iterate everything in order.
+      $items.each(function (index, item) {
+        var $item = $(item),
+          tag = item.tagName.toLowerCase(),
+          pad = 15 + ((level - minLevel) * 10);
+
+        if (tag === 'a' && level >= minLevel) {
+          // Add to existing padding.
+          $item.css('padding-left', pad + "px");
+          console.log(level, $item, 'padding-left', pad + "px");
+        } else if (tag === 'ul') {
+          // Recurse.
+          findA($item, level + 1);
+        }
+      });
+    };
+
+    console.log("HERE");
+    findA($ul);
+  };
+
+  $(document).ready(function () {
+    // Add styling, structure to TOC's.
+    $(".dropdown-menu").each(function () {
+      $(this).find("ul").each(function (index, item){
+        var $item = $(item);
+        $item.addClass('unstyled');
+      });
+      $(this).find("li").each(function () {
+        $(this).parent().append(this);
+      });
+    });
+
+    // Patch in level.
+    patchToc($("ul.globaltoc"), 2);
+    patchToc($("ul.localtoc"), 2);
+
+    // Enable dropdown.
+    $('.dropdown-toggle').dropdown();
+  });
+}());
+</script>
+
+  </head>
+  <body>
+  
+
+<div class="container">
+  <div class="content">
+    <div class="page-header">
+      <h1><a href="../../contents.html">ownCloud Administrators Manual</a></h1>
+
+    </div>
+    
+			<div class="row">
+				<div class="span3">
+					<div class="sidebar">
+						<div class="well">
+							<div class="menu-support-container">
+								<ul id="menu-support" class="menu">
+									<ul>
+										<li><a href="../../contents.html">Overview</a></li>
+									</ul>
+                  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">ownCloud 6.0 Admin Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../maintenance/index.html">Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../issues/index.html">Issues</a></li>
+</ul>
+
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+        
+
+				<div class="span9">
+					<div class="page-content">
+						
+  <div class="section" id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="enable-the-app">
+<h2>Enable The app<a class="headerlink" href="#enable-the-app" title="Permalink to this headline">¶</a></h2>
+<p>To enable the Antivirus App, navigate to the Apps page and select “Antivirus App for Files” and enable.</p>
+<p><img alt="10000000000001800000009A9494E037_png" src="../../_images/10000000000001800000009A9494E037.png" style="width: 4in; height: 1.6043in;" /></p>
+</div>
+<div class="section" id="install-clamav">
+<h2>Install ClamAV<a class="headerlink" href="#install-clamav" title="Permalink to this headline">¶</a></h2>
+<p>ClamAV must be installed on the server (either the local for Executable or Daemon Socket mode or a remote server for Daemon mode).</p>
+<p>To install, use the repository’s installation method to install “clamav”.
+For example:</p>
+<p>#apt-get install clamav</p>
+<p>For daemon mode, the ClamAV daemon must also be installed (either on the local machine for Daemon Socket or the remote machine for daemon mode).</p>
+<p>#apt-get install clamav-daemon</p>
+</div>
+<div class="section" id="configure-logging">
+<h2>Configure Logging<a class="headerlink" href="#configure-logging" title="Permalink to this headline">¶</a></h2>
+<p>Set log level to Everything in the Admin page.</p>
+<p><img alt="10000000000001AC000000477C76808F_png" src="../../_images/10000000000001AC000000477C76808F.png" style="width: 4.4583in; height: 0.7398in;" /></p>
+</div>
+<div class="section" id="executable-mode">
+<h2>Executable Mode<a class="headerlink" href="#executable-mode" title="Permalink to this headline">¶</a></h2>
+<p>To run in executable mode, ClamAV must be installed on the local server.
+From the Admin page, configure Antivirus as follows:</p>
+<p><img alt="1000000000000165000000D3FF2168AB_png" src="../../_images/1000000000000165000000D3FF2168AB.png" style="width: 3.7189in; height: 2.198in;" /></p>
+<p>The Stream Length is defined as the ClamAV StreamMaxLengeth Size.
+The default value, according to the ClamAV web site is 10M which equates to 10485760 bytes as shown in the above example.</p>
+<p>The Path to clamscan is the path for the executable clamscan file.
+By default it installs in /usr/bin/clamscan.</p>
+<p>When files are uploaded, they will be scanned and, if clean, the following logs will appear:</p>
+<p>{&#8220;app&#8221;:&#8221;files_antivirus&#8221;,&#8221;message&#8221;:&#8221;Scanning file : /Lab.txt&#8221;,&#8221;level&#8221;:0,&#8221;time&#8221;:&#8221;2013-12-17T15:24:05+00:00&#8221;}</p>
+<p>{&#8220;app&#8221;:&#8221;files_antivirus&#8221;,&#8221;message&#8221;:&#8221;Exec scan: /Lab.txt&#8221;,&#8221;level&#8221;:0,&#8221;time&#8221;:&#8221;2013-12-17T15:24:05+00:00&#8221;}</p>
+<p>{&#8220;app&#8221;:&#8221;files_antivirus&#8221;,&#8221;message&#8221;:&#8221;Result CLEAN!&#8221;,&#8221;level&#8221;:0,&#8221;time&#8221;:&#8221;2013-12-17T15:24:09+00:00&#8221;}</p>
+</div>
+<div class="section" id="daemon-mode">
+<h2>Daemon Mode<a class="headerlink" href="#daemon-mode" title="Permalink to this headline">¶</a></h2>
+<p>When running in Daemon Mode, install ClamAV and clamAV-Daemon on a remote server.</p>
+<p>The port, upon which ClamAV listens must be configured.
+To do this, add the following line in /etc/clamav/clamd.conf:</p>
+<p>TCPSocket 3310</p>
+<p>Then restart the Clamd service:</p>
+<p>/etc/init.d/clamav-daemon restart</p>
+<p>Back on the ownCloud server, navigate to the Admin page and configure the Antivirus Configuration as follows:</p>
+<p><img alt="1000000000000194000000FAD39BC0D8_png" src="../../_images/1000000000000194000000FAD39BC0D8.png" style="width: 4.2083in; height: 2.6043in;" /></p>
+<p>Where the host is the IP of the server running the ClamAV Daemon and the Port is what was configured in the above step.</p>
+<p>Upon upload of files to the ownCloud server, the following logs will appear indicating the files are clean.</p>
+<p>{&#8220;app&#8221;:&#8221;files_antivirus&#8221;,&#8221;message&#8221;:&#8221;Scanning file : /Lab.txt&#8221;,&#8221;level&#8221;:0,&#8221;time&#8221;:&#8221;2013-12-17T17:39:35+00:00&#8221;}</p>
+<p>{&#8220;app&#8221;:&#8221;files_antivirus&#8221;,&#8221;message&#8221;:&#8221;Response :: stream: OKn&#8221;,&#8221;level&#8221;:0,&#8221;time&#8221;:&#8221;2013-12-17T17:39:48+00:00&#8221;}</p>
+</div>
+<div class="section" id="daemon-socket-mode">
+<h2>Daemon Socket mode<a class="headerlink" href="#daemon-socket-mode" title="Permalink to this headline">¶</a></h2>
+<p>To run in Daemon socket mode, install clamav and clamav-daemon on the ownCloud server.</p>
+<p>Configure the Admin page as such:</p>
+<p><img alt="1000000000000160000000DBB2FB0223_png" src="../../_images/1000000000000160000000DBB2FB0223.png" style="width: 3.6665in; height: 2.2811in;" /></p>
+<p>Where Socket is the location of the Clamd executable.</p>
+<p>Upon upload of a clean file to the ownCloud server, the following logs will appear.</p>
+<p>{&#8220;app&#8221;:&#8221;files_antivirus&#8221;,&#8221;message&#8221;:&#8221;Scanning file : /Lab.txt&#8221;,&#8221;level&#8221;:0,&#8221;time&#8221;:&#8221;2013-12-17T18:19:08+00:00&#8221;}</p>
+<p>{&#8220;app&#8221;:&#8221;files_antivirus&#8221;,&#8221;message&#8221;:&#8221;Response :: stream: OKn&#8221;,&#8221;level&#8221;:0,&#8221;time&#8221;:&#8221;2013-12-17T18:19:08+00:00&#8221;}</p>
+</div>
+</div>
+
+
+					</div>
+				</div>
+			</div>
+    
+  </div>
+</div>
+  </body>
+</html>

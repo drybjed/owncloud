@@ -1152,7 +1152,7 @@ class Share {
 						$select = '`*PREFIX*share`.`id`, `item_type`, `item_source`, `*PREFIX*share`.`parent`, `uid_owner`, '
 							.'`share_type`, `share_with`, `file_source`, `path`, `file_target`, '
 							.'`permissions`, `expiration`, `storage`, `*PREFIX*filecache`.`parent` as `file_parent`, '
-							.'`name`, `mtime`, `mimetype`, `mimepart`, `size`, `encrypted`, `etag`, `mail_send`';
+							.'`name`, `mtime`, `mimetype`, `mimepart`, `size`, `unencrypted_size`, `encrypted`, `etag`, `mail_send`';
 					} else {
 						$select = '`*PREFIX*share`.`id`, `item_type`, `item_source`, `item_target`,
 							`*PREFIX*share`.`parent`, `share_type`, `share_with`, `uid_owner`,
@@ -1241,7 +1241,21 @@ class Share {
 			// Remove root from file source paths if retrieving own shared items
 			if (isset($uidOwner) && isset($row['path'])) {
 				if (isset($row['parent'])) {
-					$row['path'] = '/Shared/'.basename($row['path']);
+					$query = \OC_DB::prepare('SELECT `file_target` FROM `*PREFIX*share` WHERE `id` = ?');
+					$parentResult = $query->execute(array($row['parent']));
+					if (\OC_DB::isError($result)) {
+						\OC_Log::write('OCP\Share', 'Can\'t select parent: ' .
+								\OC_DB::getErrorMessage($result) . ', select=' . $select . ' where=' . $where,
+								\OC_Log::ERROR);
+					} else {
+						$parentRow = $parentResult->fetchRow();
+						$splitPath = explode('/', $row['path']);
+						$tmpPath = '/Shared' . $parentRow['file_target'];
+						foreach (array_slice($splitPath, 2) as $pathPart) {
+							$tmpPath = $tmpPath . '/' . $pathPart;
+						}
+						$row['path'] =  $tmpPath;
+					}
 				} else {
 					if (!isset($mounts[$row['storage']])) {
 						$mountPoints = \OC\Files\Filesystem::getMountByNumericId($row['storage']);

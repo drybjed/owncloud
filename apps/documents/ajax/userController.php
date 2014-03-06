@@ -30,7 +30,7 @@ class UserController extends Controller{
 		$member->loadBy('member_id', $args['member_id']);
 		if ($esId && $member->hasData()){
 			$memberData = $member->getData();
-			if ($memberData['es_id']===$esId){
+			if ($memberData['es_id']===$esId && $memberData['status']==Db_Member::MEMBER_STATUS_ACTIVE){
 				$member->deactivate(array($args['member_id']));
 				$op = new Db_Op();
 				$op->removeMember($esId, $args['member_id']);
@@ -39,27 +39,6 @@ class UserController extends Controller{
 		\OCP\JSON::success();
 	}
 	
-	/**
-	 * Invite users to the editing session
-	 */
-	public static function invite(){
-		self::preDispatch();
-		$invitees = @$_POST['users'];
-		
-		if (is_array($invitees)){
-			$invitees = array_unique($invitees);
-		
-			$esId = @$_POST['esId'];
-			foreach ($invitees as $userId){
-				try {
-					Invite::add($esId, $userId);
-				} catch (\Exception $e) {
-					
-				}
-			}
-		}
-		\OCP\JSON::success();
-	}
 	
 	/**
 	 * Stub - sends a generic avatar

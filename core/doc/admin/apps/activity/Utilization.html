@@ -1,0 +1,205 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Utilization &mdash; ownCloud Administrators Manual 6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap.js"></script>
+    <link rel="top" title="ownCloud Administrators Manual 6.0 documentation" href="../../index.html" />
+<script type="text/javascript">
+(function () {
+  /**
+   * Patch TOC list.
+   *
+   * Will mutate the underlying span to have a correct ul for nav.
+   *
+   * @param $span: Span containing nested UL's to mutate.
+   * @param minLevel: Starting level for nested lists. (1: global, 2: local).
+   */
+  var patchToc = function ($ul, minLevel) {
+    var findA;
+
+    // Find all a "internal" tags, traversing recursively.
+    findA = function ($elem, level) {
+      var level = level || 0,
+        $items = $elem.find("> li > a.internal, > ul, > li > ul");
+
+      // Iterate everything in order.
+      $items.each(function (index, item) {
+        var $item = $(item),
+          tag = item.tagName.toLowerCase(),
+          pad = 15 + ((level - minLevel) * 10);
+
+        if (tag === 'a' && level >= minLevel) {
+          // Add to existing padding.
+          $item.css('padding-left', pad + "px");
+          console.log(level, $item, 'padding-left', pad + "px");
+        } else if (tag === 'ul') {
+          // Recurse.
+          findA($item, level + 1);
+        }
+      });
+    };
+
+    console.log("HERE");
+    findA($ul);
+  };
+
+  $(document).ready(function () {
+    // Add styling, structure to TOC's.
+    $(".dropdown-menu").each(function () {
+      $(this).find("ul").each(function (index, item){
+        var $item = $(item);
+        $item.addClass('unstyled');
+      });
+      $(this).find("li").each(function () {
+        $(this).parent().append(this);
+      });
+    });
+
+    // Patch in level.
+    patchToc($("ul.globaltoc"), 2);
+    patchToc($("ul.localtoc"), 2);
+
+    // Enable dropdown.
+    $('.dropdown-toggle').dropdown();
+  });
+}());
+</script>
+
+  </head>
+  <body>
+  
+
+<div class="container">
+  <div class="content">
+    <div class="page-header">
+      <h1><a href="../../contents.html">ownCloud Administrators Manual</a></h1>
+
+    </div>
+    
+			<div class="row">
+				<div class="span3">
+					<div class="sidebar">
+						<div class="well">
+							<div class="menu-support-container">
+								<ul id="menu-support" class="menu">
+									<ul>
+										<li><a href="../../contents.html">Overview</a></li>
+									</ul>
+                  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">ownCloud 6.0 Admin Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../maintenance/index.html">Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../issues/index.html">Issues</a></li>
+</ul>
+
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+        
+
+				<div class="span9">
+					<div class="page-content">
+						
+  <div class="section" id="utilization">
+<h1>Utilization<a class="headerlink" href="#utilization" title="Permalink to this headline">¶</a></h1>
+<p>The Activities can be viewed by selecting
+Activity
+in the App bar on the left side of the ownCloud browser interface</p>
+<p><img alt="1000000000000050000000DB83B8FA5B_png" src="../../_images/1000000000000050000000DB83B8FA5B.png" style="width: 0.8335in; height: 2.2811in;" /></p>
+<p>This will bring up the Activity interface showing all the activities which occurred for this user’s instance.</p>
+<div class="section" id="sample-activities">
+<h2>Sample Activities<a class="headerlink" href="#sample-activities" title="Permalink to this headline">¶</a></h2>
+<p>This section will show how the different activities may appear within this interface</p>
+<div class="section" id="create-file">
+<h3>Create file<a class="headerlink" href="#create-file" title="Permalink to this headline">¶</a></h3>
+<p>The following shows a file entitled
+DeleteMe.txt
+being created 3 days ago.</p>
+<p><img alt="10000000000000F300000068AF0ECD53_png" src="../../_images/10000000000000F300000068AF0ECD53.png" style="width: 2.5311in; height: 1.0835in;" /></p>
+</div>
+<div class="section" id="delete-file">
+<h3>Delete File<a class="headerlink" href="#delete-file" title="Permalink to this headline">¶</a></h3>
+<p>The following shows a file entitled
+DeleteMe.txt
+being deleted 3 days ago.</p>
+<p><img alt="10000000000000F5000000675DC5F68C_png" src="../../_images/10000000000000F5000000675DC5F68C.png" style="width: 2.552in; height: 1.0728in;" /></p>
+</div>
+<div class="section" id="edit-a-file">
+<h3>Edit a file<a class="headerlink" href="#edit-a-file" title="Permalink to this headline">¶</a></h3>
+<p>The following shows a file
+Shared/test.txt
+being edited mere seconds ago.</p>
+<p><img alt="10000000000000F1000000F6704F46D3_png" src="../../_images/10000000000000F1000000F6704F46D3.png" style="width: 2.5102in; height: 2.5626in;" /></p>
+</div>
+<div class="section" id="share-a-file-with-a-user">
+<h3>Share a file with a user<a class="headerlink" href="#share-a-file-with-a-user" title="Permalink to this headline">¶</a></h3>
+<p>The following shows the file
+shareMe
+being shared with another user.</p>
+<p><img alt="10000000000000F1000000F56125BDBA_png" src="../../_images/10000000000000F1000000F56125BDBA.png" style="width: 2.5102in; height: 2.552in;" /></p>
+</div>
+<div class="section" id="file-shared-to-user">
+<h3>File shared to user<a class="headerlink" href="#file-shared-to-user" title="Permalink to this headline">¶</a></h3>
+<p>The following shows the file
+Shared/test.txt
+being shared with this user almost an hour ago.</p>
+<p><img alt="10000000000000F60000006754ED2A1E_png" src="../../_images/10000000000000F60000006754ED2A1E.png" style="width: 2.5626in; height: 1.0728in;" /></p>
+</div>
+<div class="section" id="file-created-by-another-user-in-shared-folder">
+<h3>File created by another user in Shared folder<a class="headerlink" href="#file-created-by-another-user-in-shared-folder" title="Permalink to this headline">¶</a></h3>
+<p>The following is shown when another user creates a file in your shared folder.</p>
+<p><img alt="10000000000000F500000067A8845EF8_png" src="../../_images/10000000000000F500000067A8845EF8.png" style="width: 2.552in; height: 1.0728in;" /></p>
+</div>
+<div class="section" id="shared-file-modified">
+<h3>Shared file modified<a class="headerlink" href="#shared-file-modified" title="Permalink to this headline">¶</a></h3>
+<p>The following shows a file
+BoB/test.txt
+modified by a user who this file was shared to.</p>
+<p><img alt="10000000000000F6000000685DFB3767_png" src="../../_images/10000000000000F6000000685DFB3767.png" style="width: 2.5626in; height: 1.0835in;" /></p>
+</div>
+<div class="section" id="combined-activities">
+<h3>Combined activities<a class="headerlink" href="#combined-activities" title="Permalink to this headline">¶</a></h3>
+<p>The following shows what “combined” activities may look like on the activity interface.</p>
+<p><img alt="10000000000000F40000019A110DD159_png" src="../../_images/10000000000000F40000019A110DD159.png" style="width: 2.5417in; height: 4.2701in;" /></p>
+</div>
+</div>
+</div>
+
+
+					</div>
+				</div>
+			</div>
+    
+  </div>
+</div>
+  </body>
+</html>

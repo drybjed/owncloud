@@ -89,6 +89,10 @@ OC.Contacts = OC.Contacts || {};
 		return this.metadata.backend;
 	};
 
+	Contact.prototype.hasPhoto = function() {
+		return (this.data && this.data.photo) || false;
+	};
+
 	Contact.prototype.setBackend = function(backend) {
 		this.metadata.backend = backend;
 	};
@@ -371,7 +375,7 @@ OC.Contacts = OC.Contacts || {};
 					});
 					self.setAsSaving(obj, false);
 					if(element === 'PHOTO') {
-						self.data.PHOTO[0].value = false;
+						self.data.photo = false;
 						self.data.thumbnail = null;
 					} else {
 						self.$fullelem.find('[data-element="' + element.toLowerCase() + '"]').hide();
@@ -584,12 +588,7 @@ OC.Contacts = OC.Contacts || {};
 								self.data.N[0]['value'][2] = nvalue.length > 2 && nvalue.slice(1, nvalue.length-1).join(' ') || '';
 								setTimeout(function() {
 									self.saveProperty({name:'N', value:self.data.N[0].value.join(';')});
-									setTimeout(function() {
-										self.$fullelem.find('.fullname').next('.action.edit').trigger('click');
-										OC.notify({message:t('contacts', 'Is this correct?')});
-									}, 1000);
-								}
-								, 500);
+								}, 500);
 							}
 							break;
 						case 'N':
@@ -680,13 +679,15 @@ OC.Contacts = OC.Contacts || {};
 	/**
 	 * Remove any open contact from the DOM.
 	 */
-	Contact.prototype.close = function() {
+	Contact.prototype.close = function(showListElement) {
 		$(document).unbind('status.contact.photoupdated');
 		console.log('Contact.close', this);
 		if(this.$fullelem) {
-			this.$fullelem.hide().remove();
-			this.getListItemElement().show();
-			this.$fullelem = null;
+			this.$fullelem.remove();
+			if(showListElement) {
+				this.getListItemElement().show();
+			}
+			delete this.$fullelem;
 			return true;
 		} else {
 			return false;
@@ -991,7 +992,14 @@ OC.Contacts = OC.Contacts || {};
 			.slice(0, 2).reverse().join(' ');
 
 		this.displayNames.lf = this.getPreferredValue('N', [this.displayNames.fn])
-			.slice(0, 2).join(', ');
+			.slice(0, 2).join(', ').trim();
+		// Fix misplaced comma if either first or last name is missing
+		if(this.displayNames.lf[0] === ',') {
+			this.displayNames.lf = this.displayNames.lf.substr(1);
+		}
+		if(this.displayNames.lf[this.displayNames.lf.length-1] === ',') {
+			this.displayNames.lf = this.displayNames.lf.substr(0, this.displayNames.lf.length-1);
+		}
 
 		this.$listelem = this.$listTemplate.octemplate({
 			id: this.id,
@@ -1122,8 +1130,8 @@ OC.Contacts = OC.Contacts || {};
 					bday = $.datepicker.parseDate('yy-mm-dd', bday.substring(0, 10));
 					bday = $.datepicker.formatDate(datepickerFormatDate, bday);
 				} catch (e) {
-					var message = t('contacts', 'Error parsing birthday {bday}: {error}', {bday:bday, error: e});
-					console.warn(message);
+					var message = t('contacts', 'Error parsing birthday {bday}', {bday:bday});
+					console.warn('Error parsing birthday', bday, e);
 					bday = '';
 					$(document).trigger('status.contacts.error', {
 						status: 'error',
@@ -1278,6 +1286,23 @@ OC.Contacts = OC.Contacts || {};
 			// A new contact
 			this.setEnabled(true);
 			this.showActions(['cancel']);
+			// Show some default properties
+			$.each(['email', 'tel'], function(idx, name) {
+				var $list = self.$fullelem.find('ul.' + name);
+				$list.removeClass('hidden');
+				var $property = self.renderStandardProperty(name);
+				$list.append($property);
+			});
+			var $list = self.$fullelem.find('ul.adr');
+			$list.removeClass('hidden');
+			var $property = self.renderAddressProperty(name);
+			$list.append($property);
+
+			// Hide some of the values
+			$.each(['bday', 'nickname', 'title'], function(idx, name) {
+				self.$fullelem.find('[data-element="' + name + '"]').hide();
+			});
+
 			return this.$fullelem;
 		}
 		// Loop thru all single occurrence values. If not set hide the
@@ -1583,20 +1608,18 @@ OC.Contacts = OC.Contacts || {};
 			src;
 
 		var $phototools = this.$fullelem.find('#phototools');
-		if(!this.$photowrapper) {
-			this.$photowrapper = this.$fullelem.find('#photowrapper');
-		}
+		var $photowrapper = this.$fullelem.find('#photowrapper');
 
 		var finishLoad = function(image) {
 			console.log('finishLoad', self.getDisplayName(), image.width, image.height);
 			$(image).addClass('contactphoto');
-			self.$photowrapper.removeClass('loading wait');
-			self.$photowrapper.css({width: image.width + 10, height: image.height + 10});
+			$photowrapper.removeClass('loading wait');
+			$photowrapper.css({width: image.width + 10, height: image.height + 10});
 			$(image).insertAfter($phototools).fadeIn();
 		};
 
-		this.$photowrapper.addClass('loading').addClass('wait');
-		if(this.getPreferredValue('PHOTO', null) === null) {
+		$photowrapper.addClass('loading').addClass('wait');
+		if(!this.hasPhoto()) {
 			$.when(this.storage.getDefaultPhoto())
 				.then(function(image) {
 					$('img.contactphoto').detach();
@@ -1620,7 +1643,7 @@ OC.Contacts = OC.Contacts || {};
 		}
 
 		if(this.isEditable()) {
-			this.$photowrapper.on('mouseenter', function(event) {
+			$photowrapper.on('mouseenter', function(event) {
 				if($(event.target).is('.favorite') || !self.data) {
 					return;
 				}
@@ -1645,7 +1668,7 @@ OC.Contacts = OC.Contacts || {};
 			$phototools.find('.upload').on('click', function() {
 				$(document).trigger('request.select.contactphoto.fromlocal', self.metaData());
 			});
-			if(this.getPreferredValue('PHOTO', false)) {
+			if(this.hasPhoto()) {
 				$phototools.find('.delete').show();
 				$phototools.find('.edit').show();
 			} else {
@@ -1654,15 +1677,15 @@ OC.Contacts = OC.Contacts || {};
 			}
 			$(document).bind('status.contact.photoupdated', function(e, data) {
 				console.log('status.contact.photoupdated', data);
-				if(!self.data.PHOTO) {
+				if(!self.hasPhoto()) {
 					self.data.PHOTO = [];
 				}
 				if(data.thumbnail) {
 					self.data.thumbnail = data.thumbnail;
-					self.data.PHOTO[0] = {value:true};
+					self.data.photo = true;
 				} else {
 					self.data.thumbnail = null;
-					self.data.PHOTO[0] = {value:false};
+					self.data.photo = false;
 				}
 				self.loadPhoto(true);
 				self.setThumbnail(null, true);
@@ -1714,12 +1737,23 @@ OC.Contacts = OC.Contacts || {};
 	};
 
 	/**
+	 * Returns an array with the names of the groups the contact is in
+	 *
+	 * @return Array
+	 */
+	Contact.prototype.groups = function() {
+		return this.getPreferredValue('CATEGORIES', []).clean('');
+	};
+
+
+	/**
 	 * Returns true/false depending on the contact being in the
 	 * specified group.
 	 * @param String name The group name (not case-sensitive)
-	 * @returns Boolean
+	 * @return Boolean
 	 */
 	Contact.prototype.inGroup = function(name) {
+		console.log('inGroup', name);
 		var categories = this.getPreferredValue('CATEGORIES', []);
 		var found = false;
 
@@ -1981,8 +2015,9 @@ OC.Contacts = OC.Contacts || {};
 	ContactList.prototype.showUncategorized = function() {
 		console.log('ContactList.showUncategorized');
 		for(var contact in this.contacts) {
-			if(this.contacts[contact].getPreferredValue('CATEGORIES', []).length === 0) {
+			if(this.contacts[contact].getPreferredValue('CATEGORIES', []).clean('').length === 0) {
 				this.contacts[contact].getListItemElement().show();
+				this.contacts[contact].setThumbnail();
 			} else {
 				this.contacts[contact].getListItemElement().hide();
 			}
@@ -2216,7 +2251,7 @@ OC.Contacts = OC.Contacts || {};
 					}
 				} else {
 					self.insertContact(contact.getListItemElement());
-					OC.notify({message:response.message});
+					$(document).trigger('status.contacts.error', response);
 				}
 			});
 		} else {
@@ -2239,6 +2274,13 @@ OC.Contacts = OC.Contacts || {};
 				$.each(addressBooks, function(addressBook, contacts) {
 					console.log(addressBook, contacts);
 					var ab = self.addressBooks.find({backend:backend, id:addressBook});
+					if(!ab) {
+						console.warn('Could not find address book!', addressBook);
+						$(document).trigger('status.contacts.error', {
+							message: t('contacts', 'Could not find address book!')
+						});
+						return true; // continue
+					}
 					ab.deleteContacts(contacts, function(response) {
 						console.log('response', response);
 						if(!response.error) {

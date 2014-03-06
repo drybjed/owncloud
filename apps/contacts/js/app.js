@@ -485,6 +485,11 @@ OC.Contacts = OC.Contacts || {
 						});
 					}
 					break;
+				case 'adr':
+					address = data.url.filter(function(n){return n});
+					var newWindow = window.open('http://open.mapquest.com/?q='+address, '_blank');
+					newWindow.focus();
+					break;
 			}
 		});
 
@@ -665,6 +670,10 @@ OC.Contacts = OC.Contacts || {
 				if(parseInt(self.currentgroup) === parseInt(result.groupid)) {
 					console.log('Showing', contact.getId());
 					contact.show();
+				}
+				if(self.currentgroup === 'uncategorized') {
+					console.log('Hiding', contact.getId());
+					contact.hide();
 				}
 			}
 		});
@@ -1382,7 +1391,11 @@ OC.Contacts = OC.Contacts || {
 		} else {
 			var contact = this.contacts.findById(id);
 			if(contact) {
-				contact.close();
+				// Only show the list element if contact is in current group
+				var showListElement = contact.inGroup(this.groups.nameById(this.currentgroup))
+					|| this.currentgroup === 'all'
+					|| (this.currentgroup === 'uncategorized' && contact.groups().length === 0);
+				contact.close(showListElement);
 			}
 		}
 		delete this.currentid;
@@ -1401,21 +1414,30 @@ OC.Contacts = OC.Contacts || {
 			console.trace();
 		}
 		this.hideActions();
+		if(this.currentid) {
+			this.closeContact(this.currentid);
+		}
 		console.log('Contacts.openContact', id, typeof id);
+		this.currentid = id;
+		var contact = this.contacts.findById(this.currentid);
+		// If opened from search we can't be sure the contact is in currentgroup
+		if(!contact.inGroup(this.groups.nameById(this.currentgroup))
+			&& ['all', 'fav', 'uncategorized'].indexOf(this.currentgroup) === -1
+		) {
+			this.groups.selectGroup({id:'all'});
+		}
 		if(this.currentid && this.currentid !== id) {
 			this.contacts.closeContact(this.currentid);
 		}
 		$(window).unbind('hashchange', this.hashChange);
-		this.currentid = id;
 		this.setAllChecked(false);
-		console.assert(typeof this.currentid === 'string', 'Current ID not string');
+		console.assert(typeof this.currentid === 'string', 'Current ID not string:' + this.currentid);
 		// Properties that the contact doesn't know
 		var groupprops = {
 			favorite: this.groups.isFavorite(this.currentid),
 			groups: this.groups.categories,
 			currentgroup: {id:this.currentgroup, name:this.groups.nameById(this.currentgroup)}
 		};
-		var contact = this.contacts.findById(this.currentid);
 		if(!contact) {
 			console.warn('Error opening', this.currentid);
 			$(document).trigger('status.contacts.error', {

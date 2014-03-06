@@ -81,14 +81,12 @@ class Backend extends \Sabre_CardDAV_Backend_Abstract {
 	 * @return bool|array
 	 */
 	public function updateAddressBook($addressbookid, array $mutations) {
-		$name = null;
-		$description = null;
 		$changes = array();
 
 		foreach($mutations as $property=>$newvalue) {
 			switch($property) {
 				case '{DAV:}displayname' :
-					$changes['name'] = $newvalue;
+					$changes['displayname'] = $newvalue;
 					break;
 				case '{' . \Sabre_CardDAV_Plugin::NS_CARDDAV
 						. '}addressbook-description' :
@@ -116,11 +114,7 @@ class Backend extends \Sabre_CardDAV_Backend_Abstract {
 	 */
 	public function createAddressBook($principaluri, $uri, array $properties) {
 
-		$properties = array();
-		$userid = $this->userIDByPrincipal($principaluri);
-
-		foreach($properties as $property=>$newvalue) {
-
+		foreach($properties as $property => $newvalue) {
 			switch($property) {
 				case '{DAV:}displayname' :
 					$properties['displayname'] = $newvalue;
@@ -171,7 +165,6 @@ class Backend extends \Sabre_CardDAV_Backend_Abstract {
 	 * @return array
 	 */
 	public function getCards($addressbookid) {
-		$contacts = array();
 		list($id, $backend) = $this->getBackendForAddressBook($addressbookid);
 		$contacts = $backend->getContacts($id);
 
@@ -198,9 +191,18 @@ class Backend extends \Sabre_CardDAV_Backend_Abstract {
 	 */
 	public function getCard($addressbookid, $carduri) {
 		list($id, $backend) = $this->getBackendForAddressBook($addressbookid);
-		$contact = $backend->getContact($id, array('uri' => urldecode($carduri)));
-		return ($contact ? $contact : false);
-
+		try {
+			$contact = $backend->getContact($id, array('uri' => urldecode($carduri)));
+			if(is_array($contact) ) {
+				$contact['etag'] = '"' . md5($contact['carddata']) . '"';
+				return $contact;
+			}
+		} catch(\Exception $e) {
+			//throw new \Sabre_DAV_Exception_NotFound($e->getMessage());
+			\OCP\Util::writeLog('contacts', __METHOD__.', Exception: '. $e->getMessage(), \OCP\Util::DEBUG);
+			return false;
+		}
+		return false;
 	}
 
 	/**

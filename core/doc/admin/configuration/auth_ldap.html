@@ -113,7 +113,7 @@
 										<li><a href="../contents.html">Overview</a></li>
 									</ul>
                   <ul>
-<li class="toctree-l1"><a class="reference internal" href="../index.html">Admin Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">ownCloud 6.0 Admin Documentation</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation</a></li>
@@ -131,6 +131,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#microsoft-active-directory">Microsoft Active Directory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#duplicating-server-configurations">Duplicating Server Configurations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#owncloud-ldap-internals">ownCloud LDAP Internals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#groups">Groups</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#user-and-group-mapping">User and Group Mapping</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#caching">Caching</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#handling-with-backup-server">Handling with Backup Server</a></li>
@@ -664,22 +665,23 @@ fetched correctly on the Settings → Users page.</p>
 <div class="section" id="owncloud-avatar-integration">
 <h2>ownCloud Avatar integration<a class="headerlink" href="#owncloud-avatar-integration" title="Permalink to this headline">¶</a></h2>
 <p>ownCloud 6 incorporates a user profile picture feature, called Avatar. If a user
-has a photo stored in the <em>jpegPhoto</em> attribute, it will be used as Avatar. The
-user then is not able to change his avatar in the personal settings. It must be
-done within LDAP.</p>
+has a photo stored in the <em>jpegPhoto</em> or, since 6.0.2, <em>thumbnailPhoto</em>
+attribute, it will be used as Avatar. The user then is not able to change his
+avatar in the personal settings. It must be done within LDAP. <em>jpegPhoto</em> is
+preferred over <em>thumbnailPhoto</em>.</p>
 <div class="figure">
 <img alt="../_images/ldap-fetched-avatar.png" src="../_images/ldap-fetched-avatar.png" />
 <p class="caption">Profile picture fetched from LDAP, Personal Settings</p>
 </div>
-<p>If the <em>jpegPhoto</em> attribute is not set or empty, the default ownCloud behaviour
-is active, i.e. the user will be able to set and change his profile picture in
-the personal settings. If the user sets a profile picture within ownCloud it
-will _not_ be stored in LDAP.</p>
-<p>The <em>jpegPhoto</em> attribute will be fetched once a day to make sure the current
-photo from LDAP is used in ownCloud. If a picture is added later, a possibly set
-profile picture will be overridden with the LDAP one. If a photo stored in the
-<em>jpegPhoto</em> attribute is deleted later, the last profile picture in ownCloud
-will still be used.</p>
+<p>If the <em>jpegPhoto</em> or <em>thumbnailPhoto</em> attribute is not set or empty, the
+default ownCloud behaviour is active, i.e. the user will be able to set and
+change his profile picture in the personal settings. If the user sets a profile
+picture within ownCloud it will _not_ be stored in LDAP.</p>
+<p>The <em>jpegPhoto</em> or <em>thumbnailPhoto</em> attribute will be fetched once a day to make
+sure the current photo from LDAP is used in ownCloud. If a picture is added
+later, a possibly set profile picture will be overridden with the LDAP one. If a
+photo stored in the <em>jpegPhoto</em> and/or <em>thumbnailPhoto</em> attribute is deleted
+later, the last profile picture in ownCloud will still be used.</p>
 <p>The photo taken from LDAP will be adjusted to the requirements of the ownCloud
 avatar automatically. I.e. it will be transformed into a square. If the photo
 needs to be cut, it will be done equally from both affected sides. The original
@@ -725,6 +727,13 @@ in the <em>Connection Settings</em>, so the new configuration is not used on Sav
 <div class="section" id="owncloud-ldap-internals">
 <h2>ownCloud LDAP Internals<a class="headerlink" href="#owncloud-ldap-internals" title="Permalink to this headline">¶</a></h2>
 <p>Some parts of how the LDAP backend works are described here. May it be helpful.</p>
+</div>
+<div class="section" id="groups">
+<h2>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h2>
+<p>At the moment, only secondary groups are read. That means that only the groups
+are retrieved, which are returned by the attribute auto-detected (or manually
+chosen) in Group-Member association. Primary groups are not being taken into
+account.</p>
 </div>
 <div class="section" id="user-and-group-mapping">
 <h2>User and Group Mapping<a class="headerlink" href="#user-and-group-mapping" title="Permalink to this headline">¶</a></h2>

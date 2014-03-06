@@ -153,8 +153,13 @@ class Helper {
 	public static function filterLocations($locations, $basePath) {
 		$fullPath = array_values(self::getDirectories());
 		$fullPath[] = rtrim(App::getBackupBase(), '/');
+		$fullPath[] = rtrim(App::getTempBase(), '/');
 		$fullPath[] = \OCP\Config::getSystemValue( "datadirectory", \OC::$SERVERROOT."/data" );
 		$fullPath[] = \OC::$SERVERROOT."/themes";
+		
+		foreach($fullPath as $key=>$path){
+			$fullPath[] = realpath($path);
+		}
 		
 		$exclusions = array(
 			'full' => $fullPath,
@@ -163,10 +168,12 @@ class Helper {
 		
 		foreach ($locations as $key => $location) {
 			$fullPath = $basePath . '/' .$location;
-			if (!is_dir($fullPath)) {
+			$realPath = realpath($fullPath);
+			if (is_file($fullPath)) {
 				continue;
 			}
 			if (in_array($fullPath, $exclusions['full'])
+				|| in_array($realPath, $exclusions['full'])
 				|| in_array($location, $exclusions['relative'])
 			) {
 				unset($locations[$key]);

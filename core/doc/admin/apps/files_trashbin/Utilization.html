@@ -1,0 +1,221 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Utilization &mdash; ownCloud Administrators Manual 6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap.js"></script>
+    <link rel="top" title="ownCloud Administrators Manual 6.0 documentation" href="../../index.html" />
+<script type="text/javascript">
+(function () {
+  /**
+   * Patch TOC list.
+   *
+   * Will mutate the underlying span to have a correct ul for nav.
+   *
+   * @param $span: Span containing nested UL's to mutate.
+   * @param minLevel: Starting level for nested lists. (1: global, 2: local).
+   */
+  var patchToc = function ($ul, minLevel) {
+    var findA;
+
+    // Find all a "internal" tags, traversing recursively.
+    findA = function ($elem, level) {
+      var level = level || 0,
+        $items = $elem.find("> li > a.internal, > ul, > li > ul");
+
+      // Iterate everything in order.
+      $items.each(function (index, item) {
+        var $item = $(item),
+          tag = item.tagName.toLowerCase(),
+          pad = 15 + ((level - minLevel) * 10);
+
+        if (tag === 'a' && level >= minLevel) {
+          // Add to existing padding.
+          $item.css('padding-left', pad + "px");
+          console.log(level, $item, 'padding-left', pad + "px");
+        } else if (tag === 'ul') {
+          // Recurse.
+          findA($item, level + 1);
+        }
+      });
+    };
+
+    console.log("HERE");
+    findA($ul);
+  };
+
+  $(document).ready(function () {
+    // Add styling, structure to TOC's.
+    $(".dropdown-menu").each(function () {
+      $(this).find("ul").each(function (index, item){
+        var $item = $(item);
+        $item.addClass('unstyled');
+      });
+      $(this).find("li").each(function () {
+        $(this).parent().append(this);
+      });
+    });
+
+    // Patch in level.
+    patchToc($("ul.globaltoc"), 2);
+    patchToc($("ul.localtoc"), 2);
+
+    // Enable dropdown.
+    $('.dropdown-toggle').dropdown();
+  });
+}());
+</script>
+
+  </head>
+  <body>
+  
+
+<div class="container">
+  <div class="content">
+    <div class="page-header">
+      <h1><a href="../../contents.html">ownCloud Administrators Manual</a></h1>
+
+    </div>
+    
+			<div class="row">
+				<div class="span3">
+					<div class="sidebar">
+						<div class="well">
+							<div class="menu-support-container">
+								<ul id="menu-support" class="menu">
+									<ul>
+										<li><a href="../../contents.html">Overview</a></li>
+									</ul>
+                  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">ownCloud 6.0 Admin Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../maintenance/index.html">Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../issues/index.html">Issues</a></li>
+</ul>
+
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+        
+
+				<div class="span9">
+					<div class="page-content">
+						
+  <div class="section" id="utilization">
+<h1>Utilization<a class="headerlink" href="#utilization" title="Permalink to this headline">¶</a></h1>
+<p>The deleted files app, when enabled, automatically moves deleted files to the Deleted Files folder and leaves them available for restore or permanent deletion</p>
+<div class="section" id="delete-a-file">
+<h2>Delete a file<a class="headerlink" href="#delete-a-file" title="Permalink to this headline">¶</a></h2>
+<p>To delete a file, either select the file check box and select Delete
+on the upper right of the screen,
+or the “x”
+to the right of the file.</p>
+<p><img alt="1000000000000530000001410CF0028A_png" src="../../_images/1000000000000530000001410CF0028A.png" style="width: 6.5in; height: 1.5701in;" /></p>
+<p>To delete multiple files simultaneously, select the check box on all the desired files, then select Delete
+on the upper right of the screen.</p>
+</div>
+<div class="section" id="view-deleted-files">
+<h2>View Deleted Files<a class="headerlink" href="#view-deleted-files" title="Permalink to this headline">¶</a></h2>
+<p>To view a list of the deleted files, select the Deleted files
+button on the upper right of the browser.</p>
+<p><img alt="1000000000000532000000285DDBBF37_png" src="../../_images/1000000000000532000000285DDBBF37.png" style="width: 6.5in; height: 0.1957in;" /></p>
+<p>Once selected, a list of all deleted files will appear.</p>
+</div>
+<div class="section" id="restore-files">
+<h2>Restore files<a class="headerlink" href="#restore-files" title="Permalink to this headline">¶</a></h2>
+<p>As with deleting files, there are two ways to restore a file.
+Either select the check box next to the file (or for bulk restore – files) and select restore
+on the upper right.
+Or hover over the file and select restore
+.</p>
+<p><img alt="1000000000000527000000A7AB409FE0_png" src="../../_images/1000000000000527000000A7AB409FE0.png" style="width: 6.5in; height: 0.8228in;" />
+<img alt="100000000000052500000088DBB95005_png" src="../../_images/100000000000052500000088DBB95005.png" style="width: 6.5in; height: 0.6717in;" /></p>
+</div>
+<div class="section" id="permanently-delete-files">
+<h2>Permanently Delete Files<a class="headerlink" href="#permanently-delete-files" title="Permalink to this headline">¶</a></h2>
+<p>Files in the Deleted Files
+folder can be permanently deleted.
+To do this, either select the check box next to the file (or for bulk deletion – files) and select Delete in the upper right corner.
+Or hover over the file and select the “x”.
+See figure in section
+.</p>
+</div>
+<div class="section" id="nested-files-and-restore">
+<h2>Nested files and restore<a class="headerlink" href="#nested-files-and-restore" title="Permalink to this headline">¶</a></h2>
+<p>If, for instance, the directory structure within ownCloud is
+<em>~/public/support/documentation/ownCloud undelete</em>
+.</p>
+<p><img alt="1000000000000525000000BE30CF0423_png" src="../../_images/1000000000000525000000BE30CF0423.png" style="width: 6.5in; height: 0.9374in;" /></p>
+<div class="section" id="delete-entire-directory-structure">
+<h3>Delete entire directory structure<a class="headerlink" href="#delete-entire-directory-structure" title="Permalink to this headline">¶</a></h3>
+<p>When the public folder is deleted, all child folders/files will also be deleted.</p>
+<p><img alt="100000000000052F000000C2867B7294_png" src="../../_images/100000000000052F000000C2867B7294.png" style="width: 6.5in; height: 0.95in;" /></p>
+<p>Suppose the file “ownCloud undelete.docx” was still required.
+A restore of the file will place it in the ‘root’ directory of the Files folder.</p>
+</div>
+<div class="section" id="delete-only-the-file">
+<h3>Delete only the file<a class="headerlink" href="#delete-only-the-file" title="Permalink to this headline">¶</a></h3>
+<p>If the file “ownCloud undelete.docx”
+was accidentally deleted, it may be restored following the steps described in section
+.
+The restore will place the file back into the directory structure from where it came.</p>
+</div>
+<div class="section" id="delete-the-file-then-the-directory-structure">
+<h3>Delete the file then the directory structure<a class="headerlink" href="#delete-the-file-then-the-directory-structure" title="Permalink to this headline">¶</a></h3>
+<p>If the file “ownCloud undelete.docs”
+is deleted, then the entire directory structure is deleted, the file will appear in the ‘root’ of the Deleted Files folder.</p>
+<p><img alt="1000000000000523000000C6F786381C_png" src="../../_images/1000000000000523000000C6F786381C.png" style="width: 6.5in; height: 0.9783in;" /></p>
+<p>A restore of “ownCloud undelete.docx”
+will place it in the user’s ownCloud root directory.</p>
+<p><img alt="100000000000053100000142D9A4C916_png" src="../../_images/100000000000053100000142D9A4C916.png" style="width: 6.5in; height: 1.5752in;" /></p>
+</div>
+</div>
+<div class="section" id="shared-files-and-restore">
+<h2>Shared files and restore<a class="headerlink" href="#shared-files-and-restore" title="Permalink to this headline">¶</a></h2>
+<p>When a
+shared file is deleted, the file will be deleted from the shared to user as well.
+Upon restore of the file by the file owner, the file is no longer shared.</p>
+</div>
+<div class="section" id="restore-files-with-versions">
+<h2>Restore files with Versions<a class="headerlink" href="#restore-files-with-versions" title="Permalink to this headline">¶</a></h2>
+<p>When a file which has versions has been deleted, and then restored, the versions will exist upon restoration.</p>
+</div>
+</div>
+
+
+					</div>
+				</div>
+			</div>
+    
+  </div>
+</div>
+  </body>
+</html>

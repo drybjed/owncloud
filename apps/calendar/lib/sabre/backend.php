@@ -58,14 +58,21 @@ class OC_Connector_Sabre_CalDAV extends Sabre_CalDAV_Backend_Abstract {
 			$calendars[] = $calendar;
 		}
 		if(\OCP\App::isEnabled('contacts')) {
-			\OCP\Share::registerBackend('addressbook', 'OCA\Contacts\Share\Addressbook', 'contact');
-			$app = new \OCA\Contacts\App(\OCP\User::getUser());
+			$ctag = 0;
+			$app = new \OCA\Contacts\App();
+			$addressBooks = $app->getAddressBooksForUser();
+			foreach($addressBooks as $addressBook) {
+				$tmp = $addressBook->lastModified();
+				if(!is_null($tmp)) {
+					$ctag = max($ctag, $tmp);
+				}
+			}
 			$calendars[] = array(
 				'id' => 'contact_birthdays',
 				'uri' => 'contact_birthdays',
 				'{DAV:}displayname' => (string)OC_Calendar_App::$l10n->t('Contact birthdays'),
 				'principaluri' => 'principals/contact_birthdays',
-				'{' . Sabre_CalDAV_Plugin::NS_CALENDARSERVER . '}getctag' => '0',
+				'{' . Sabre_CalDAV_Plugin::NS_CALENDARSERVER . '}getctag' => $ctag,
 				'{' . Sabre_CalDAV_Plugin::NS_CALDAV . '}supported-calendar-component-set'
 					=> new Sabre_CalDAV_Property_SupportedCalendarComponentSet(array('VEVENT')),
 			);
@@ -264,11 +271,6 @@ class OC_Connector_Sabre_CalDAV extends Sabre_CalDAV_Backend_Abstract {
 			$app = new \OCA\Contacts\App();
 			$addressBooks = $app->getAddressBooksForUser();
 			foreach($addressBooks as $addressBook) {
-				if($addressBook->getBackend()->name !== 'local'
-					|| !$addressBook->getBackend()->isActive($addressBook->getId())
-				) {
-					continue;
-				}
 				foreach($addressBook->getChildren() as $contact) {
 					$vevent = $contact->getBirthdayEvent();
 					if(is_null($vevent)) {
@@ -306,20 +308,23 @@ class OC_Connector_Sabre_CalDAV extends Sabre_CalDAV_Backend_Abstract {
 	 */
 	public function getCalendarObject($calendarId,$objectUri) {
 		if($calendarId === 'contact_birthdays') {
-			$app = new \OCA\Contacts\App();
-			list($backend, $addressBookId, $contactId) = explode('::', $objectUri);
-			$contact = $app->getContact($backend, $addressBookId, $contactId);
-			$vevent = $contact->getBirthdayEvent();
-			if(is_null($vevent)) {
-				return false;
+			$objectUriArray = explode('::', $objectUri);
+			if(count($objectUriArray) === 3) {
+				$app = new \OCA\Contacts\App();
+				list($backend, $addressBookId, $contactId) = $objectUriArray;
+				$contact = $app->getContact($backend, $addressBookId, $contactId);
+				$vevent = $contact->getBirthdayEvent();
+				if(is_null($vevent)) {
+					return false;
+				}
+				return $this->OCAddETag(array(
+					'id' => 0,
+					'calendarid' => 'contact_birthdays',
+					'uri' => $contact->getBackend()->name.'::'.$contact->getParent()->getId().'::'.$contact->getId(),
+					'lastmodified' => $contact->lastModified(),
+					'calendardata' => $vevent->serialize()
+				));
 			}
-			return $this->OCAddETag(array(
-				'id' => 0,
-				'calendarid' => 'contact_birthdays',
-				'uri' => $contact->getBackend()->name.'::'.$contact->getParent()->getId().'::'.$contact->getId(),
-				'lastmodified' => $contact->lastModified(),
-				'calendardata' => $vevent->serialize()
-			));
 		}
 		$data = OC_Calendar_Object::findWhereDAVDataIs($calendarId,$objectUri);
 		if(is_array($data)) {

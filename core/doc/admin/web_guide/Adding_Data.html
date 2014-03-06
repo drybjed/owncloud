@@ -1,0 +1,195 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Adding Data &mdash; ownCloud Administrators Manual 6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <link rel="top" title="ownCloud Administrators Manual 6.0 documentation" href="../index.html" />
+<script type="text/javascript">
+(function () {
+  /**
+   * Patch TOC list.
+   *
+   * Will mutate the underlying span to have a correct ul for nav.
+   *
+   * @param $span: Span containing nested UL's to mutate.
+   * @param minLevel: Starting level for nested lists. (1: global, 2: local).
+   */
+  var patchToc = function ($ul, minLevel) {
+    var findA;
+
+    // Find all a "internal" tags, traversing recursively.
+    findA = function ($elem, level) {
+      var level = level || 0,
+        $items = $elem.find("> li > a.internal, > ul, > li > ul");
+
+      // Iterate everything in order.
+      $items.each(function (index, item) {
+        var $item = $(item),
+          tag = item.tagName.toLowerCase(),
+          pad = 15 + ((level - minLevel) * 10);
+
+        if (tag === 'a' && level >= minLevel) {
+          // Add to existing padding.
+          $item.css('padding-left', pad + "px");
+          console.log(level, $item, 'padding-left', pad + "px");
+        } else if (tag === 'ul') {
+          // Recurse.
+          findA($item, level + 1);
+        }
+      });
+    };
+
+    console.log("HERE");
+    findA($ul);
+  };
+
+  $(document).ready(function () {
+    // Add styling, structure to TOC's.
+    $(".dropdown-menu").each(function () {
+      $(this).find("ul").each(function (index, item){
+        var $item = $(item);
+        $item.addClass('unstyled');
+      });
+      $(this).find("li").each(function () {
+        $(this).parent().append(this);
+      });
+    });
+
+    // Patch in level.
+    patchToc($("ul.globaltoc"), 2);
+    patchToc($("ul.localtoc"), 2);
+
+    // Enable dropdown.
+    $('.dropdown-toggle').dropdown();
+  });
+}());
+</script>
+
+  </head>
+  <body>
+  
+
+<div class="container">
+  <div class="content">
+    <div class="page-header">
+      <h1><a href="../contents.html">ownCloud Administrators Manual</a></h1>
+
+    </div>
+    
+			<div class="row">
+				<div class="span3">
+					<div class="sidebar">
+						<div class="well">
+							<div class="menu-support-container">
+								<ul id="menu-support" class="menu">
+									<ul>
+										<li><a href="../contents.html">Overview</a></li>
+									</ul>
+                  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">ownCloud 6.0 Admin Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues</a></li>
+</ul>
+
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+        
+
+				<div class="span9">
+					<div class="page-content">
+						
+  <div class="section" id="adding-data">
+<h1>Adding Data<a class="headerlink" href="#adding-data" title="Permalink to this headline">¶</a></h1>
+<p>There are a few ways to add data to the ownCloud instance.
+Files may be uploaded or text files may be created directly within ownCloud.
+Folders may also be created directly within the ownCloud web interface.</p>
+<div class="section" id="creation">
+<h2>Creation<a class="headerlink" href="#creation" title="Permalink to this headline">¶</a></h2>
+<p>To create a file or folder, select the New button in section 3 of the main ownCloud screen.</p>
+<p><img alt="1000000000000163000000E9CDA84C92_png" src="../_images/1000000000000163000000E9CDA84C92.png" style="width: 3.698in; height: 2.4272in;" /></p>
+<div class="section" id="create-a-text-file">
+<h3>Create a text file<a class="headerlink" href="#create-a-text-file" title="Permalink to this headline">¶</a></h3>
+<p>Select “Text file” from the menu and enter the desired file name.</p>
+<p><img alt="1000000000000175000000FAB2A2B294_png" src="../_images/1000000000000175000000FAB2A2B294.png" style="width: 3.8846in; height: 2.6043in;" /></p>
+<p>Then press enter.</p>
+<p><img alt="100000000000047A000000FB86FF2A9A_png" src="../_images/100000000000047A000000FB86FF2A9A.png" style="width: 6.5in; height: 1.4228in;" /></p>
+<p>Notice the file has been placed in section 2 of the main ownCloud window.
+Since it is an empty file, the size is “0 Bytes” and it was last modified a few seconds ago.</p>
+</div>
+<div class="section" id="create-a-folder">
+<h3>Create a folder<a class="headerlink" href="#create-a-folder" title="Permalink to this headline">¶</a></h3>
+<p>To create a folder within ownCloud, simply select “Folder” from the menu and enter the desired folder name.</p>
+<p><img alt="1000000000000195000000EF7E44082C_png" src="../_images/1000000000000195000000EF7E44082C.png" style="width: 4.2189in; height: 2.4898in;" /></p>
+<p>Then select Enter.</p>
+<p>Notice the folder appears in the window.</p>
+<p><img alt="100000000000047A0000011C6682A254_png" src="../_images/100000000000047A0000011C6682A254.png" style="width: 6.5in; height: 1.611in;" /></p>
+</div>
+<div class="section" id="adding-a-file-from-a-link">
+<h3>Adding a file from a link<a class="headerlink" href="#adding-a-file-from-a-link" title="Permalink to this headline">¶</a></h3>
+<p>If the desired file exists on the internet already it is possible to add the file to ownCloud using the internet link.
+To do this, select “From link” from the menu and enter the URL of the file then select enter.</p>
+<p><img alt="10000000000001CE000000F2E2084BA1_png" src="../_images/10000000000001CE000000F2E2084BA1.png" style="width: 4.8126in; height: 2.5201in;" /></p>
+<p><img alt="100000000000046D0000015F4B5494A9_png" src="../_images/100000000000046D0000015F4B5494A9.png" style="width: 6.5in; height: 2.0138in;" /></p>
+<p>The file contained in the link now appears in the user’s ownCloud instance.</p>
+</div>
+</div>
+<div class="section" id="uploading-files">
+<h2>Uploading files<a class="headerlink" href="#uploading-files" title="Permalink to this headline">¶</a></h2>
+<p>There are two methods possible to upload files to the ownCloud web interface.</p>
+<div class="section" id="drag-and-drop">
+<h3>Drag and Drop<a class="headerlink" href="#drag-and-drop" title="Permalink to this headline">¶</a></h3>
+<p>Simply drag and drop one or more files from the client’s
+Desktop into section 2 of the main ownCloud window.
+These files will then be uploaded to ownCloud and appear in the data window.</p>
+</div>
+<div class="section" id="upload-button">
+<h3>Upload Button<a class="headerlink" href="#upload-button" title="Permalink to this headline">¶</a></h3>
+<p>The second method to upload a file to ownCloud is to select the upload arrow on the top left of the main ownCloud screen.
+This will being up a File Upload selection box.</p>
+<p><img alt="100000000000048100000245268CDB7A_png" src="../_images/100000000000048100000245268CDB7A.png" style="width: 6.5in; height: 3.2756in;" /></p>
+<p>Navigate to the directory containing the desired files and select the file for uploading and press Open.
+To upload multiple files simultaneously, use either the SHIFT or CTRL key during file selection as appropriate.</p>
+</div>
+</div>
+</div>
+
+
+					</div>
+				</div>
+			</div>
+    
+  </div>
+</div>
+  </body>
+</html>

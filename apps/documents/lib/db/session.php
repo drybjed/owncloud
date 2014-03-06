@@ -63,8 +63,9 @@ class Db_Session extends \OCA\Documents\Db {
 					->loadBy('file_id', $file->getFileId())
 					->getData()
 		;
+		$session['title'] = basename($path);
 		
-		$memberColor = Helper::getRandomColor();
+		$memberColor = Helper::getMemberColor($uid);
 		
 		$member = new Db_Member(array(
 			$session['es_id'], 

@@ -15,6 +15,8 @@ use \OC\AppFramework\Core\API;
 \Sabre\VObject\Property::$classMap['TEL']		= '\OC\VObject\StringProperty';
 \Sabre\VObject\Property::$classMap['IMPP']		= '\OC\VObject\StringProperty';
 \Sabre\VObject\Property::$classMap['URL']		= '\OC\VObject\StringProperty';
+\Sabre\VObject\Property::$classMap['LABEL']		= '\OC\VObject\StringProperty';
+\Sabre\VObject\Property::$classMap['X-EVOLUTION-FILE-AS'] = '\OC\VObject\StringProperty';
 \Sabre\VObject\Property::$classMap['N']			= '\OC\VObject\CompoundProperty';
 \Sabre\VObject\Property::$classMap['ADR']		= '\OC\VObject\CompoundProperty';
 \Sabre\VObject\Property::$classMap['GEO']		= '\OC\VObject\CompoundProperty';
@@ -53,7 +55,7 @@ if(\OCP\User::isLoggedIn()) {
 	$app = new App($api->getUserId());
 	$addressBooks = $app->getAddressBooksForUser();
 	foreach($addressBooks as $addressBook)  {
-		if($addressBook->getBackend()->name === 'local') {
+		if($addressBook->isActive()) {
 			\OCP\Contacts::registerAddressBook(new AddressbookProvider($addressBook));
 		}
 	}

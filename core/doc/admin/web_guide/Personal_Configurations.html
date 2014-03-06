@@ -1,0 +1,193 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Personal Configurations &mdash; ownCloud Administrators Manual 6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <link rel="top" title="ownCloud Administrators Manual 6.0 documentation" href="../index.html" />
+<script type="text/javascript">
+(function () {
+  /**
+   * Patch TOC list.
+   *
+   * Will mutate the underlying span to have a correct ul for nav.
+   *
+   * @param $span: Span containing nested UL's to mutate.
+   * @param minLevel: Starting level for nested lists. (1: global, 2: local).
+   */
+  var patchToc = function ($ul, minLevel) {
+    var findA;
+
+    // Find all a "internal" tags, traversing recursively.
+    findA = function ($elem, level) {
+      var level = level || 0,
+        $items = $elem.find("> li > a.internal, > ul, > li > ul");
+
+      // Iterate everything in order.
+      $items.each(function (index, item) {
+        var $item = $(item),
+          tag = item.tagName.toLowerCase(),
+          pad = 15 + ((level - minLevel) * 10);
+
+        if (tag === 'a' && level >= minLevel) {
+          // Add to existing padding.
+          $item.css('padding-left', pad + "px");
+          console.log(level, $item, 'padding-left', pad + "px");
+        } else if (tag === 'ul') {
+          // Recurse.
+          findA($item, level + 1);
+        }
+      });
+    };
+
+    console.log("HERE");
+    findA($ul);
+  };
+
+  $(document).ready(function () {
+    // Add styling, structure to TOC's.
+    $(".dropdown-menu").each(function () {
+      $(this).find("ul").each(function (index, item){
+        var $item = $(item);
+        $item.addClass('unstyled');
+      });
+      $(this).find("li").each(function () {
+        $(this).parent().append(this);
+      });
+    });
+
+    // Patch in level.
+    patchToc($("ul.globaltoc"), 2);
+    patchToc($("ul.localtoc"), 2);
+
+    // Enable dropdown.
+    $('.dropdown-toggle').dropdown();
+  });
+}());
+</script>
+
+  </head>
+  <body>
+  
+
+<div class="container">
+  <div class="content">
+    <div class="page-header">
+      <h1><a href="../contents.html">ownCloud Administrators Manual</a></h1>
+
+    </div>
+    
+			<div class="row">
+				<div class="span3">
+					<div class="sidebar">
+						<div class="well">
+							<div class="menu-support-container">
+								<ul id="menu-support" class="menu">
+									<ul>
+										<li><a href="../contents.html">Overview</a></li>
+									</ul>
+                  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">ownCloud 6.0 Admin Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues</a></li>
+</ul>
+
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+        
+
+				<div class="span9">
+					<div class="page-content">
+						
+  <div class="section" id="personal-configurations">
+<h1>Personal Configurations<a class="headerlink" href="#personal-configurations" title="Permalink to this headline">¶</a></h1>
+<p>Each ownCloud user may configure some personal preferences.
+To make these configurations, navigate to the Personal page.
+Select the user name and the following menu will appear.</p>
+<p><img alt="100000000000047A000000B727198874_png" src="../_images/100000000000047A000000B727198874.png" style="width: 6.5in; height: 1.0382in;" /></p>
+<p>Select Personal to get to the configuration page.</p>
+<p>Configuration options on this page may appear or disappear depending on what the ownCloud admin has configured.
+The basic configuration parameters are as follows.</p>
+<p><img alt="1000000000000467000002B63162E59B_png" src="../_images/1000000000000467000002B63162E59B.png" style="width: 6.5in; height: 4.0028in;" /></p>
+<p><img alt="10000000000004690000026615360BEB_png" src="../_images/10000000000004690000026615360BEB.png" style="width: 6.5in; height: 3.5346in;" /></p>
+<div class="section" id="important-links">
+<h2>Important links<a class="headerlink" href="#important-links" title="Permalink to this headline">¶</a></h2>
+<p>The top section of the Personal page contains the same links as the First Run Wizard described earlier in this document.
+For more information on this, see the document on the First Run Wizard.</p>
+</div>
+<div class="section" id="quota">
+<h2>Quota<a class="headerlink" href="#quota" title="Permalink to this headline">¶</a></h2>
+<p>Below shows the used and remaining space for the user.
+For information as to how this is calculated, refer to the ownCloud Quota Calculations document.</p>
+</div>
+<div class="section" id="password-change">
+<h2>Password Change<a class="headerlink" href="#password-change" title="Permalink to this headline">¶</a></h2>
+<p>If the user desires to change the password, do so in this section.
+Enter the current password followed by the new password and select “Change Password”.
+It should be noted, that when using LDAP authentication, the password is contained within the LDAP and not locally thus this field will not change the password.</p>
+</div>
+<div class="section" id="change-display-name">
+<h2>Change Display Name<a class="headerlink" href="#change-display-name" title="Permalink to this headline">¶</a></h2>
+<p>To change the way your name is displayed within ownCloud, enter the desired name under “Full Name”.</p>
+</div>
+<div class="section" id="add-email-address">
+<h2>Add Email Address<a class="headerlink" href="#add-email-address" title="Permalink to this headline">¶</a></h2>
+<p>For password recovery and share notifications, it is important for ownCloud to have an email on record.
+Enter the desired email address under the EMAIL section.</p>
+</div>
+<div class="section" id="avatar">
+<h2>Avatar<a class="headerlink" href="#avatar" title="Permalink to this headline">¶</a></h2>
+<p>ownCloud allows a user to upload an Avatar for their ownCloud instance.
+This can be done under the “Profile Picture” section of the Personal Page.</p>
+<p>To upload a new Avatar, select the “Upload new” button.
+If the desired avatar exists on the ownCloud file system, select “Select new from Files” and to remove the avatar and return to the default, select “Remove image”</p>
+</div>
+<div class="section" id="language">
+<h2>Language<a class="headerlink" href="#language" title="Permalink to this headline">¶</a></h2>
+<p>If English is not the user’s native language, they may change the language in this section.</p>
+</div>
+<div class="section" id="webdav">
+<h2>WebDAV<a class="headerlink" href="#webdav" title="Permalink to this headline">¶</a></h2>
+<p>This provides the address to use in order to access a user’s files via WebDav.</p>
+</div>
+</div>
+
+
+					</div>
+				</div>
+			</div>
+    
+  </div>
+</div>
+  </body>
+</html>

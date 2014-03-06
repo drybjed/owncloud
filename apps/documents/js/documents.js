@@ -13,7 +13,7 @@ var documentsMain = {
 	
 	UI : {
 		/* Overlay HTML */
-		overlay : '<div id="documents-overlay"></div> <div id="documents-overlay-below"></div>',
+		overlay : '<div id="documents-overlay" class="icon icon-loading-dark"></div> <div id="documents-overlay-below" class="icon icon-loading-dark"></div>',
 				
 		/* Toolbar HTML */
 		toolbar : '<div id="odf-toolbar" class="dijitToolbar">' +
@@ -23,6 +23,9 @@ var documentsMain = {
 					'  <button id="odf-close">' +
 						t('documents', 'Close') +
 					'  </button>' +
+					'  <img id="saving-document" alt=""' +
+					'   src="' + OC.imagePath('core', 'loading.gif') + '"' +
+					'  />' +
 					'  <button id="odf-invite" class="drop">' +
 						  t('documents', 'Share') +
 					'  </button>' +
@@ -73,7 +76,7 @@ var documentsMain = {
 			$(document.body).prepend(documentsMain.UI.container);
 			// in case we are on the public sharing page we shall display the odf into the preview tag
 			$('#preview').html(container);
-			$('title').text(documentsMain.UI.mainTitle + '| ' + title);
+			$('title').text(title + ' - ' + documentsMain.UI.mainTitle);
 		},
 		
 		hideEditor : function(){
@@ -88,6 +91,17 @@ var documentsMain = {
 					$('title').text(documentsMain.UI.mainTitle);
 				});
 		},
+		
+		showSave : function (){
+			$('#odf-close').hide();
+			$('#saving-document').show();
+		},
+		
+		hideSave : function(){
+			$('#saving-document').hide();
+			$('#odf-close').show();
+		},
+		
 		showProgress : function(message){
 			if (!message){
 				message = '&nbsp;';
@@ -109,7 +123,7 @@ var documentsMain = {
 		
 		hideLostConnection : function() {
 			$('#connection-lost,#warning-connection-lost').remove();
-			$('#odf-toolbar').children(':not(#document-title)').show();
+			$('#odf-toolbar').children(':not(#document-title,#saving-document)').show();
 			$('#memberList .memberListButton').css({opacity : 1});
 		}
 	},
@@ -172,11 +186,7 @@ var documentsMain = {
 		} 
 
 		if (!response || !response.status || response.status==='error'){
-			OC.Notification.show(t('documents', 'Failed to load this document. Please check if it can be opened with an external odt editor. This might also mean it has been unshared or deleted recently.'));
-			documentsMain.prepareGrid();
-			documentsMain.show();
-			$(window).off('beforeunload');
-			setTimeout(OC.Notification.hide, 7000);
+			documentsMain.onEditorShutdown(t('documents', 'Failed to load this document. Please check if it can be opened with an external odt editor. This might also mean it has been unshared or deleted recently.'));
 			return;
 		}
 		
@@ -194,7 +204,7 @@ var documentsMain = {
 				documentsMain.fileId = response.file_id;
 				documentsMain.fileName = documentsMain.getNameByFileid(response.file_id);
 				documentsMain.UI.showEditor(
-						documentsMain.fileName,
+						documentsMain.fileName || response.title,
 						response.permissions & OC.PERMISSION_SHARE && !documentsMain.isGuest
 				);
 				var serverFactory = new ServerFactory();
@@ -206,7 +216,16 @@ var documentsMain = {
 				documentsMain.webodfServerInstance = serverFactory.createServer();
 				documentsMain.webodfServerInstance.setToken(oc_requesttoken);
 				documentsMain.webodfEditorInstance = new Editor({unstableFeaturesEnabled: documentsMain.useUnstable}, documentsMain.webodfServerInstance, serverFactory);
-				
+				documentsMain.webodfEditorInstance.addEventListener(Editor.EVENT_BEFORESAVETOFILE, documentsMain.UI.showSave);
+				documentsMain.webodfEditorInstance.addEventListener(Editor.EVENT_SAVEDTOFILE, documentsMain.UI.hideSave);
+				documentsMain.webodfEditorInstance.addEventListener(Editor.EVENT_ERROR, documentsMain.onEditorShutdown);
+				documentsMain.webodfEditorInstance.addEventListener(Editor.EVENT_HASSESSIONHOSTCONNECTIONCHANGED, function(has) {
+					if (has){
+						documentsMain.UI.hideLostConnection();
+					} else {
+						documentsMain.UI.showLostConnection();
+					}
+				});
 				// load the document and get called back when it's live
 				documentsMain.webodfEditorInstance.openSession(documentsMain.esId, documentsMain.memberId, function() {
 					documentsMain.webodfEditorInstance.startEditing();
@@ -280,14 +299,6 @@ var documentsMain = {
 			);
 		}
 	},
-	
-	sendInvite: function() {
-		var users = [];
-		$('input[name=invitee\\[\\]]').each(function(i, e) {
-			users.push($(e).val());
-		});
-		$.post(OC.Router.generate('documents_user_invite'), {users: users});
-	},
 
 	renameDocument: function(name) {
 		var url = OC.Router.generate('documents_rename') + '/' + documentsMain.fileId;
@@ -311,23 +322,6 @@ var documentsMain = {
 		);
 	},
 
-	// FIXME: copy/pasted from Files.isFileNameValid, needs refactor into core
-	isFileNameValid:function (name) {
-		if (name === '.') {
-			throw t('files', '\'.\' is an invalid file name.');
-		} else if (name.length === 0) {
-			throw t('files', 'File name cannot be empty.');
-		}
-
-		// check for invalid characters
-		var invalid_characters = ['\\', '/', '<', '>', ':', '"', '|', '?', '*'];
-		for (var i = 0; i < invalid_characters.length; i++) {
-			if (name.indexOf(invalid_characters[i]) !== -1) {
-				throw t('files', "Invalid name, '\\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed.");
-			}
-		}
-		return true;
-	},
 
 	onRenamePrompt: function() {
 		var name = documentsMain.fileName;
@@ -351,7 +345,7 @@ var documentsMain = {
 				try {
 					input.tipsy('hide');
 					input.removeClass('error');
-					if (documentsMain.isFileNameValid(newName)) {
+					if (Files.isFileNameValid(newName)) {
 						input.tipsy('hide');
 						input.remove();
 						$('#document-title>div').show();
@@ -381,6 +375,30 @@ var documentsMain = {
 		input.focus();
 		input.selectRange(0, name.length);
 	},
+
+	onEditorShutdown : function (message){
+			OC.Notification.show(message);
+
+			$(window).off('beforeunload');
+			if (documentsMain.isEditorMode){
+				documentsMain.isEditorMode = false;
+				parent.location.hash = "";
+			} else {
+				setTimeout(OC.Notification.hide, 7000);
+			}
+			documentsMain.prepareGrid();
+			try {
+				documentsMain.webodfEditorInstance.endEditing();
+				documentsMain.webodfEditorInstance.closeSession(function() {
+					documentsMain.webodfEditorInstance.destroy(documentsMain.UI.hideEditor);
+				});
+			} catch (e){
+				documentsMain.UI.hideEditor();
+			}
+			
+			documentsMain.show();
+		},
+		
 
 	onClose: function() {
 		"use strict";
@@ -516,7 +534,30 @@ dojoConfig = {
 	}
 };
 
+
 //init
+var Files = Files || {
+	// FIXME: copy/pasted from Files.isFileNameValid, needs refactor into core
+	isFileNameValid:function (name) {
+		if (name === '.') {
+			throw t('files', '\'.\' is an invalid file name.');
+		} else if (name.length === 0) {
+			throw t('files', 'File name cannot be empty.');
+		}
+
+		// check for invalid characters
+		var invalid_characters = ['\\', '/', '<', '>', ':', '"', '|', '?', '*'];
+		for (var i = 0; i < invalid_characters.length; i++) {
+			if (name.indexOf(invalid_characters[i]) !== -1) {
+				throw t('files', "Invalid name, '\\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed.");
+			}
+		}
+		return true;
+	},
+	
+	updateStorageStatistics: function(){}
+};
+
 $(document).ready(function() {
 	"use strict";
 	
@@ -548,6 +589,7 @@ $(document).ready(function() {
 		);
 	});
 	$('.add-document').on('click', '.add', documentsMain.onCreate);
+
 
 	var file_upload_start = $('#file_upload_start');
 	file_upload_start.on('fileuploaddone', documentsMain.show);

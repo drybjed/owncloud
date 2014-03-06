@@ -1,0 +1,160 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>File Systems &mdash; ownCloud Administrators Manual 6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap.js"></script>
+    <link rel="top" title="ownCloud Administrators Manual 6.0 documentation" href="../../index.html" />
+<script type="text/javascript">
+(function () {
+  /**
+   * Patch TOC list.
+   *
+   * Will mutate the underlying span to have a correct ul for nav.
+   *
+   * @param $span: Span containing nested UL's to mutate.
+   * @param minLevel: Starting level for nested lists. (1: global, 2: local).
+   */
+  var patchToc = function ($ul, minLevel) {
+    var findA;
+
+    // Find all a "internal" tags, traversing recursively.
+    findA = function ($elem, level) {
+      var level = level || 0,
+        $items = $elem.find("> li > a.internal, > ul, > li > ul");
+
+      // Iterate everything in order.
+      $items.each(function (index, item) {
+        var $item = $(item),
+          tag = item.tagName.toLowerCase(),
+          pad = 15 + ((level - minLevel) * 10);
+
+        if (tag === 'a' && level >= minLevel) {
+          // Add to existing padding.
+          $item.css('padding-left', pad + "px");
+          console.log(level, $item, 'padding-left', pad + "px");
+        } else if (tag === 'ul') {
+          // Recurse.
+          findA($item, level + 1);
+        }
+      });
+    };
+
+    console.log("HERE");
+    findA($ul);
+  };
+
+  $(document).ready(function () {
+    // Add styling, structure to TOC's.
+    $(".dropdown-menu").each(function () {
+      $(this).find("ul").each(function (index, item){
+        var $item = $(item);
+        $item.addClass('unstyled');
+      });
+      $(this).find("li").each(function () {
+        $(this).parent().append(this);
+      });
+    });
+
+    // Patch in level.
+    patchToc($("ul.globaltoc"), 2);
+    patchToc($("ul.localtoc"), 2);
+
+    // Enable dropdown.
+    $('.dropdown-toggle').dropdown();
+  });
+}());
+</script>
+
+  </head>
+  <body>
+  
+
+<div class="container">
+  <div class="content">
+    <div class="page-header">
+      <h1><a href="../../contents.html">ownCloud Administrators Manual</a></h1>
+
+    </div>
+    
+			<div class="row">
+				<div class="span3">
+					<div class="sidebar">
+						<div class="well">
+							<div class="menu-support-container">
+								<ul id="menu-support" class="menu">
+									<ul>
+										<li><a href="../../contents.html">Overview</a></li>
+									</ul>
+                  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">ownCloud 6.0 Admin Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../maintenance/index.html">Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../issues/index.html">Issues</a></li>
+</ul>
+
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+        
+
+				<div class="span9">
+					<div class="page-content">
+						
+  <div class="section" id="file-systems">
+<h1>File Systems<a class="headerlink" href="#file-systems" title="Permalink to this headline">¶</a></h1>
+<p>Once enabled, all files within ownCloud are encrypted, with the exceptions mentioned above.
+This includes files in local storage, as well as files contained within external storage mounts.</p>
+<p>The encryption app creates several key files/folders when enabled.
+~/data/public-keys contains the public keys for all users, and ~/data/owncloud_private_keys contains system wide private keys utilized for public link shares as well as the recovery key.</p>
+<p><img alt="10000000000002C700000048F3729BAA_png" src="../../_images/10000000000002C700000048F3729BAA.png" style="width: 6.5in; height: 0.6583in;" /></p>
+<p>The encryption app stores key information in the ~/data/&lt;user&gt;/files_encryption directory.</p>
+<p><img alt="100000000000024400000027BEE1E4A9_png" src="../../_images/100000000000024400000027BEE1E4A9.png" style="width: 6.0417in; height: 0.4063in;" /></p>
+<p>As mentioned previously, the private key is generated from the user’s password.</p>
+<p>Each file that the user owns will have a corresponding keyfile maintained in the keyfiles directory.</p>
+<p><img alt="100000000000026E0000003672ADCB6E_png" src="../../_images/100000000000026E0000003672ADCB6E.png" style="width: 6.4791in; height: 0.5626in;" /></p>
+<p>In addition a share key will be generated for each file in the event that there is an external storage mount by the admin for multiple users or groups.</p>
+<p><img alt="100000000000029F000000B8A83D0275_png" src="../../_images/100000000000029F000000B8A83D0275.png" style="width: 6.5in; height: 1.7819in;" /></p>
+<p>When viewing a file directly on the ownCloud data directory, it will show up as encrypted.</p>
+<p><img alt="10000000000002B30000003A5B960711_png" src="../../_images/10000000000002B30000003A5B960711.png" style="width: 6.5in; height: 0.5457in;" /></p>
+<p>However, viewing the same file via the browser, the actual contents of the file are displayed.</p>
+<p><img alt="10000000000001A40000006C954442CE_png" src="../../_images/10000000000001A40000006C954442CE.png" style="width: 4.3752in; height: 1.1252in;" /></p>
+</div>
+
+
+					</div>
+				</div>
+			</div>
+    
+  </div>
+</div>
+  </body>
+</html>

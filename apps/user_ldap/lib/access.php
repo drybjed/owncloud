@@ -729,7 +729,7 @@ class Access extends LDAPUtility {
 			}
 		} else {
 			if(!is_null($limit)) {
-				\OCP\Util::writeLog('user_ldap', 'Paged search failed :(', \OCP\Util::INFO);
+				\OCP\Util::writeLog('user_ldap', 'Paged search was not available', \OCP\Util::INFO);
 			}
 		}
 	}
@@ -893,6 +893,17 @@ class Access extends LDAPUtility {
 		$name = preg_replace('/[^a-zA-Z0-9_.@-]/u', '', $name);
 
 		return $name;
+	}
+
+	/**
+	* @brief escapes (user provided) parts for LDAP filter
+	* @param String $input, the provided value
+	* @returns the escaped string
+	*/
+	public function escapeFilterPart($input) {
+		$search  = array('*', '\\', '(', ')');
+		$replace = array('\\*', '\\\\', '\\(', '\\)');
+		return str_replace($search, $replace, $input);
 	}
 
 	/**

@@ -519,6 +519,13 @@ OC.Contacts = OC.Contacts || {};
 			addText: t('contacts', 'Save'),
 			ok: function(event, newname) {
 				console.log('New name', newname);
+				if(self.hasGroup(newname)) {
+					$(document).trigger('status.contacts.error', {
+						error: true,
+						message: t('contacts', 'A group named "{group}" already exists', {group: escapeHTML(newname)})
+					});
+					return;
+				}
 				$editInput.addClass('loading');
 				self.renameGroup(oldname, newname, function(response) {
 					if(response.error) {
@@ -595,7 +602,7 @@ OC.Contacts = OC.Contacts || {};
 		var self = this;
 		if(this.hasGroup(name)) {
 			if(typeof cb === 'function') {
-				cb({error:true, message:t('contacts', 'A group named {group} already exists', {group: escapeHTML(name)})});
+				cb({error:true, message:t('contacts', 'A group named "{group}" already exists', {group: escapeHTML(name)})});
 			}
 			return;
 		}
@@ -615,6 +622,12 @@ OC.Contacts = OC.Contacts || {};
 				$elem.data('contacts', contacts);
 				$elem.data('rawname', name);
 				$elem.data('id', id);
+				$elem.droppable({
+					drop: self.contactDropped,
+					activeClass: 'ui-state-active',
+					hoverClass: 'ui-state-hover',
+					scope: 'contacts'
+				});
 				var added = false;
 				self.$groupList.find('li.group[data-type="category"]').each(function() {
 					if ($(this).data('rawname').toLowerCase().localeCompare(name.toLowerCase()) > 0) {
