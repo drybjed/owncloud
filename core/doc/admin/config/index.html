@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>&lt;no title&gt; &mdash; ownCloud Administrators Manual 6.0 documentation</title>
+    <title>The Configuration File &mdash; ownCloud Administrators Manual 6.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -28,6 +28,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/bootstrap.js"></script>
     <link rel="top" title="ownCloud Administrators Manual 6.0 documentation" href="../index.html" />
+    <link rel="next" title="Default Parameters" href="default_parameters.html" />
+    <link rel="prev" title="Delete Share" href="../sharing_api/delete_share.html" />
 <script type="text/javascript">
 (function () {
   /**
@@ -112,10 +114,30 @@
                   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">ownCloud 6.0 Admin Documentation</a></li>
 </ul>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apps/index.html">Apps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cron/index.html">Driving Events with Cron</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quota/index.html">Quota Calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sharing_api/index.html">Sharing API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">The Configuration File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="default_parameters.html">Default Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reverse_proxy_configurations.html">Reverse Proxy Configurations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_experience.html">User Experience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mail_parameters.html">Mail Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deleted_items.html">Deleted Items</a></li>
+<li class="toctree-l2"><a class="reference internal" href="verification.html">Verification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="session_info.html">Session Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_locations.html">Code Locations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apps.html">APPS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="previews.html">Previews</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maintenance.html">Maintenance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscellaneous.html">Miscellaneous</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues</a></li>
 </ul>
 
@@ -129,25 +151,16 @@
 				<div class="span9">
 					<div class="page-content">
 						
-  <p><strong>ownCloud config.php</strong></p>
+  <div class="section" id="the-configuration-file">
+<h1>The Configuration File<a class="headerlink" href="#the-configuration-file" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Table_of_Contents.html">Table of Contents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Default_Parameters.html">Default Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Reverse_Proxy_Configurations.html">Reverse Proxy Configurations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="User_Experience.html">User Experience</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Mail_Parameters.html">Mail Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Deleted_Items.html">Deleted Items</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Verification.html">Verification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Logging.html">Logging</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Session_Info.html">Session Info</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Code_Locations.html">Code Locations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="APPS.html">APPS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Previews.html">Previews</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Maintenance.html">Maintenance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Miscellaneous.html">Miscellaneous</a></li>
-</ul>
+</div>
+<p>ownCloud uses a configuration file to set certain parameters.  The
+configuration file is entitled <cite>config.php</cite> and resides in the <cite>config</cite>
+directory of the ownCloud installation. Also residing in that directory is a
+sample configuration file entitled <cite>config.sample.php</cite>.  This file lists all
+the configurable parameters within ownCloud along with a brief description.
+This document will provide more details as to what each parameter is used for.</p>
 </div>
 
 

@@ -13,23 +13,25 @@ var documentsMain = {
 	
 	UI : {
 		/* Overlay HTML */
-		overlay : '<div id="documents-overlay" class="icon icon-loading-dark"></div> <div id="documents-overlay-below" class="icon icon-loading-dark"></div>',
+		overlay : '<div id="documents-overlay" class="icon-loading-dark"></div> <div id="documents-overlay-below" class="icon-loading-dark"></div>',
 				
 		/* Toolbar HTML */
 		toolbar : '<div id="odf-toolbar" class="dijitToolbar">' +
-					'  <div id="document-title"><div>' +
-					'%title%' +
-			        '  </div></div>' +
+					'  <div id="document-title" class="icon-noise">' +
+					'<div class="logo-wide"></div>' +
+					'<div id="document-title-container"></div>' +
+			        '</div>' +
+					'  <span id="toolbar" class="claro">' +
+					'  <button id="odf-invite" class="drop">' +
+						  t('documents', 'Share') +
+					'  </button>' +
 					'  <button id="odf-close">' +
-						t('documents', 'Close') +
+					       t('documents', 'Close') +
 					'  </button>' +
 					'  <img id="saving-document" alt=""' +
 					'   src="' + OC.imagePath('core', 'loading.gif') + '"' +
 					'  />' +
-					'  <button id="odf-invite" class="drop">' +
-						  t('documents', 'Share') +
-					'  </button>' +
-					'  <span id="toolbar" class="claro"></span>' +
+					'</span>' +
 					'</div>',
 					
 		/* Editor wrapper HTML */
@@ -66,7 +68,8 @@ var documentsMain = {
 		},
 		
 		showEditor : function(title, canShare){
-			$(document.body).prepend(documentsMain.UI.toolbar.replace(/%title%/g, title));
+			$(document.body).prepend(documentsMain.UI.toolbar);
+			$('#document-title-container').text(title);
 			if (!canShare){
 				$('#odf-invite').remove();
 			} else {
@@ -125,6 +128,11 @@ var documentsMain = {
 			$('#connection-lost,#warning-connection-lost').remove();
 			$('#odf-toolbar').children(':not(#document-title,#saving-document)').show();
 			$('#memberList .memberListButton').css({opacity : 1});
+		},
+		
+		notify : function(message){
+			OC.Notification.show(message);
+			setTimeout(OC.Notification.hide, 10000);
 		}
 	},
 	
@@ -137,6 +145,17 @@ var documentsMain = {
 		if (!OC.currentUser){
 			documentsMain.isGuest = true;
 			
+			
+			if ($("[name='document']").val()){
+				// !Login page mess wih WebODF toolbars
+				$(document.body).attr('id', 'body-user');
+				$('header,footer').hide();
+				documentsMain.prepareSession();
+				documentsMain.joinSession(
+					$("[name='document']").val()
+				);
+			}
+
 		} else {
 			// Does anything indicate that we need to autostart a session?
 			fileId = parent.location.hash.replace(/\W*/g, '');
@@ -171,6 +190,7 @@ var documentsMain = {
 		$(window).on('beforeunload', function(){
 			return t('documents', "Leaving this page in Editor mode might cause unsaved data. It is recommended to use 'Close' button instead."); 
 		});
+		$(window).on("unload", documentsMain.onTerminate);
 	},
 	
 	prepareGrid : function(){
@@ -197,7 +217,7 @@ var documentsMain = {
 			return;
 		}
 
-		require({ }, ["webodf/editor/server/owncloud/ServerFactory", "webodf/editor/Editor"], function (ServerFactory, Editor) {
+		require({ }, ["owncloud/ServerFactory", "webodf/editor/Editor"], function (ServerFactory, Editor) {
 			// fade out file list and show WebODF canvas
 			$('#content').fadeOut('fast').promise().done(function() {
 				
@@ -205,8 +225,11 @@ var documentsMain = {
 				documentsMain.fileName = documentsMain.getNameByFileid(response.file_id);
 				documentsMain.UI.showEditor(
 						documentsMain.fileName || response.title,
-						response.permissions & OC.PERMISSION_SHARE && !documentsMain.isGuest
+						typeof OC.Share !== 'undefined' && response.permissions & OC.PERMISSION_SHARE && !documentsMain.isGuest
 				);
+				if (documentsMain.isGuest){
+					$('#odf-close').text(t('documents', 'Save') );
+				}
 				var serverFactory = new ServerFactory();
 				documentsMain.esId = response.es_id;
 				documentsMain.memberId = response.member_id;
@@ -256,6 +279,7 @@ var documentsMain = {
 		OC.addScript('documents', 'viewer/viewer', function() {
 			documentsMain.prepareGrid();
 			$(window).off('beforeunload');
+			$(window).off('unload');
 			var path = $('li[data-id='+ id +']>a').attr('href');
 			odfViewer.isDocuments = true;
 			odfViewer.onView(path);
@@ -272,7 +296,18 @@ var documentsMain = {
 		$.post(
 			OC.Router.generate('documents_documents_create'),
 			{},
-			documentsMain.show
+			function(response){
+				if (response && response.fileid){
+					documentsMain.prepareSession();
+					documentsMain.joinSession(response.fileid);
+				} else {
+					if (response && response.message){
+						documentsMain.UI.notify(response.message);
+					}
+					documentsMain.show();
+				}
+			}
+			
 		);
 	},
 
@@ -299,6 +334,75 @@ var documentsMain = {
 			);
 		}
 	},
+	
+	changeNick: function(memberId, name, node){
+		var url = OC.generateUrl('apps/documents/ajax/user/rename/{member_id}', {member_id: memberId});
+		$.post(
+			url,
+			{ name : name },
+			function(result) {
+				if (result && result.status === 'error') {
+					if (result.message){
+						documentsMain.UI.notify(result.message);
+					}
+					return;
+				}
+			}
+		);
+	},
+	
+	onNickChange: function(memberId, fullNameNode){
+		if (!documentsMain.isGuest || memberId !== documentsMain.memberId){
+			return;
+		}
+		if ($(fullNameNode.parentNode).children('input').length !== 0){
+			return;
+		}
+		
+		var input = $('<input type="text"/>').val($(fullNameNode).attr('fullname'));
+		$(fullNameNode.parentNode).append(input);
+		$(fullNameNode).hide();
+
+		input.on('blur', function(){
+			var newName = input.val();
+			if (!newName || newName === name) {
+				input.tipsy('hide');
+				input.remove();
+				$(fullNameNode).show();
+				return;
+			}
+			else {
+				try {
+					input.tipsy('hide');
+					input.removeClass('error');
+					input.tipsy('hide');
+					input.remove();
+					$(fullNameNode).show();
+					documentsMain.changeNick(memberId, newName, fullNameNode);
+				}
+				catch (error) {
+					input.attr('title', error);
+					input.tipsy({gravity: 'n', trigger: 'manual'});
+					input.tipsy('show');
+					input.addClass('error');
+				}
+			}
+		});
+		input.on('keyup', function(event){
+			if (event.keyCode === 27) {
+				// cancel by putting in an empty value
+				$(this).val('');
+				$(this).blur();
+				event.preventDefault();
+			}
+			if (event.keyCode === 13) {
+				$(this).blur();
+				event.preventDefault();
+			}
+		});
+		input.focus();
+		input.selectRange(0, name.length);
+	},
 
 	renameDocument: function(name) {
 		var url = OC.Router.generate('documents_rename') + '/' + documentsMain.fileId;
@@ -308,16 +412,13 @@ var documentsMain = {
 			function(result) {
 				if (result && result.status === 'error') {
 					if (result.message){
-						OC.Notification.show(result.message);
-						setTimeout(function() {
-							OC.Notification.hide();
-						}, 10000);
+						documentsMain.IU.notify(result.message);
 					}
 					return;
 				}
 				documentsMain.fileName = name;
 				$('title').text(documentsMain.UI.mainTitle + '| ' + name);
-				$('#document-title>div').text(name);
+				$('#document-title-container').text(name);
 			}
 		);
 	},
@@ -380,6 +481,7 @@ var documentsMain = {
 			OC.Notification.show(message);
 
 			$(window).off('beforeunload');
+			$(window).off('unload');
 			if (documentsMain.isEditorMode){
 				documentsMain.isEditorMode = false;
 				parent.location.hash = "";
@@ -397,7 +499,7 @@ var documentsMain = {
 			}
 			
 			documentsMain.show();
-		},
+	},
 		
 
 	onClose: function() {
@@ -408,6 +510,7 @@ var documentsMain = {
 		}
 		documentsMain.isEditorMode = false;
 		$(window).off('beforeunload');
+		$(window).off('unload');
 		parent.location.hash = "";
 
 		documentsMain.webodfEditorInstance.endEditing();
@@ -432,6 +535,33 @@ var documentsMain = {
 			documentsMain.show();
 // 			});
 		});
+	},
+	
+	onTerminate: function(){
+		var url = '';
+		if (documentsMain.isGuest){
+			url = OC.generateUrl('apps/documents/ajax/user/disconnectGuest/{member_id}', {member_id: documentsMain.memberId});
+		} else {
+			url = OC.generateUrl('apps/documents/ajax/user/disconnect/{member_id}', {member_id: documentsMain.memberId});
+		}
+		$.ajax({
+				type: "POST",
+				url: url,
+				data: {esId: documentsMain.esId},
+				dataType: "json",
+				async: false // Should be sync to complete before the page is closed
+		});
+
+		
+		documentsMain.webodfEditorInstance.endEditing();
+		documentsMain.webodfEditorInstance.closeSession(function() {
+			if (documentsMain.isGuest){
+				$(document.body).attr('id', 'body-login');
+				$('header,footer').show();
+			}
+			documentsMain.webodfEditorInstance.destroy(documentsMain.UI.hideEditor);
+		});
+
 	},
 	
 	getNameByFileid : function(fileid){
@@ -485,7 +615,8 @@ var documentsMain = {
 			a.attr('href', OC.Router.generate('download',{file:document.path}));
 			a.find('label').text(document.name);
 			a.css('background-image', 'url("'+document.icon+'")');
-
+			Files.lazyLoadPreview(document.path, document.mimetype, function(node){ return function(path){node.css('background-image', 'url("'+ path +'")');}; }(a),  32, 40, document.etag, document.icon);
+//function(path, mime, ready, width, height, etag) {
 			$('.documentslist').append(docElem);
 			docElem.show();
 			hasDocuments = true;
@@ -530,7 +661,8 @@ dojoConfig = {
 		"dijit": OC.appswebroots.documents + "/js/3rdparty/resources/dijit",
 		"dojox": OC.appswebroots.documents + "/js/3rdparty/resources/dojox",
 		"dojo": OC.appswebroots.documents + "/js/3rdparty/resources/dojo",
-		"resources": OC.appswebroots.documents + "/js/3rdparty/resources"
+		"resources": OC.appswebroots.documents + "/js/3rdparty/resources",
+		"owncloud" : OC.appswebroots.documents + "/js"
 	}
 };
 
@@ -555,7 +687,65 @@ var Files = Files || {
 		return true;
 	},
 	
+	generatePreviewUrl : function(urlSpec) {
+		urlSpec = urlSpec || {};
+		if (!urlSpec.x) {
+			urlSpec.x = $('#filestable').data('preview-x');
+		}
+		if (!urlSpec.y) {
+			urlSpec.y = $('#filestable').data('preview-y');
+		}
+		urlSpec.y *= window.devicePixelRatio;
+		urlSpec.x *= window.devicePixelRatio;
+		urlSpec.forceIcon = 0;
+		return OC.generateUrl('/core/preview.png?') + $.param(urlSpec);
+	},
+	
+	lazyLoadPreview : function(path, mime, ready, width, height, etag, defaultIcon) {
+		var urlSpec = {};
+		var previewURL;
+		ready(defaultIcon); // set mimeicon URL
+
+		urlSpec.file = Files.fixPath(path);
+		if (etag){
+			// use etag as cache buster
+			urlSpec.c = etag;
+		} else {
+			console.warn('Files.lazyLoadPreview(): missing etag argument');
+		}
+
+		urlSpec.x = width;
+		urlSpec.y = height;
+		if ( $('#isPublic').length ) {
+			urlSpec.t = $('#dirToken').val();
+		}
+		previewURL = Files.generatePreviewUrl(urlSpec);
+		previewURL = previewURL.replace('(', '%28');
+		previewURL = previewURL.replace(')', '%29');
+
+		// preload image to prevent delay
+		// this will make the browser cache the image
+		var img = new Image();
+		img.onload = function(){
+			//set preview thumbnail URL
+			ready(previewURL);
+		};
+		img.src = previewURL;
+	},
+	
+	fixPath: function(fileName) {
+		if (fileName.substr(0, 2) === '//') {
+			return fileName.substr(1);
+		}
+		return fileName;
+	},
+	
 	updateStorageStatistics: function(){}
+},
+FileList = FileList || {};
+
+FileList.getCurrentDirectory = function(){
+	return $('#dir').val() || '/';
 };
 
 $(document).ready(function() {
@@ -577,22 +767,22 @@ $(document).ready(function() {
 	$(document.body).on('click', '#document-title>div', documentsMain.onRenamePrompt);
 	$(document.body).on('click', '#odf-close', documentsMain.onClose);
 	$(document.body).on('click', '#odf-invite', documentsMain.onInvite);
-	$(document.body).on('click', '#odf-join', function(event){
-		event.preventDefault();
 
-		// !Login page mess wih WebODF toolbars
-		$(document.body).attr('id', 'body-user');
-		$('header,footer').hide();
-		documentsMain.prepareSession();
-		documentsMain.joinSession(
-				$("[name='document']").val()
-		);
-	});
 	$('.add-document').on('click', '.add', documentsMain.onCreate);
 
 
 	var file_upload_start = $('#file_upload_start');
-	file_upload_start.on('fileuploaddone', documentsMain.show);
+	if (typeof supportAjaxUploadWithProgress !== 'undefined' && supportAjaxUploadWithProgress()) {
+		file_upload_start.on('fileuploadstart', function(e, data) {
+			$('#upload').addClass('icon-loading');
+			$('.add-document .upload').css({opacity:0})
+		});
+	}
+	file_upload_start.on('fileuploaddone', function(){
+		$('#upload').removeClass('icon-loading');
+		$('.add-document .upload').css({opacity:0.7})
+		documentsMain.show();
+	});
 	//TODO when ending a session as the last user close session?
 	
 	OC.addScript('documents', '3rdparty/webodf/dojo-amalgamation', documentsMain.onStartup);

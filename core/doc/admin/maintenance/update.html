@@ -118,6 +118,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apps/index.html">Apps</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Maintenance</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="backup.html">Backing up ownCloud</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="">Updating ownCloud</a><ul>
@@ -129,6 +130,10 @@
 <li class="toctree-l2"><a class="reference internal" href="migrating.html">Migrating ownCloud Installations</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../cron/index.html">Driving Events with Cron</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quota/index.html">Quota Calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sharing_api/index.html">Sharing API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html">The Configuration File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues</a></li>
 </ul>
 
@@ -151,7 +156,7 @@ you will need to look for compatible third party applications yourself. <strong>
 </div>
 <div class="section" id="update">
 <h2>Update<a class="headerlink" href="#update" title="Permalink to this headline">¶</a></h2>
-<p>Updating means updating ownCloud to the latest <em>point release</em>, e.g. ownCloud 5.0.13 → 5.0.14a. This procedure uses the
+<p>Updating means updating ownCloud to the latest <em>point release</em>, e.g. ownCloud 6.0.0a → 6.0.2. This procedure uses the
 ownCloud updater plugin called &#8220;Updater&#8221;: it&#8217;s an internal application already present in your ownCloud installation.</p>
 <p>To update ownCloud, follow those steps:</p>
 <ol class="arabic simple">
@@ -183,9 +188,7 @@ version, e.g. 5.0.14a in the 5.0 series. If not, update to that version first
 <li><p class="first">Deactivate all third party applications.</p>
 </li>
 <li><p class="first">Delete everything from your ownCloud installation directory, except data and
-config. Assuming that it&#8217;s your working directory, you could execute this command:</p>
-<div class="highlight-python"><pre>ls | grep -v 'data\|config' | xargs rm -r</pre>
-</div>
+config.</p>
 </li>
 <li><p class="first">Unpack the release tarball in the ownCloud directory (or copy the
 files thereto). Assuming that your installation directory is called &#8216;owncloud&#8217; and that it&#8217;s inside your working

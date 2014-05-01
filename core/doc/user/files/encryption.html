@@ -153,48 +153,47 @@
 						
   <div class="section" id="files-encryption">
 <h1>Files Encryption<a class="headerlink" href="#files-encryption" title="Permalink to this headline">¶</a></h1>
-<p>ownCloud ships a encryption app, which allows to encrypt all files stored in
-your ownCloud. Once the encryption app was enabled by the admin all your files
+<p>ownCloud ships a encryption app, which enables encryption of all files stored in
+your ownCloud. Once the encryption app is enabled by the admin, all your files
 will be encrypted automatically. Encryption and decryption always happens
 server-side. This enables the user to continue to use all the other apps to
-view and edit his data. But this also means that the server administrator could
-intercept your data. Server-Side encryption is especially interesting if you
+view and edit their data. But this also means that the server administrator could
+intercept your data. Server-Side encryption is especially useful if you
 use external storages. This way you can make sure that the storage provider is
 not able to read your data.</p>
-<p>Please remember. Once the encryption app is enabled you need your log-in
-password to decrypt and access your data. By default your data will be lost if
-you loss your log-in password. If you want to protect yourself against password
-loss store your log-in password on a secure place or enable the recovery key
-as described below.</p>
+<p>Please remember. Once the encryption app is enabled your log-in password is required
+to decrypt and access your data. By default your data will be lost if
+you lose your log-in password. If you want to protect yourself against password
+loss, store your log-in password in a secure place or enable the recovery-key
+feature as described below.</p>
 <div class="section" id="what-gets-encrypted">
 <h2>What gets encrypted<a class="headerlink" href="#what-gets-encrypted" title="Permalink to this headline">¶</a></h2>
-<p>The current version encrypts all your files stored in ownCloud.</p>
-<p>At the moment we don&#8217;t encrypt:</p>
+<p>The current version encrypts all your files stored in ownCloud except the following:</p>
 <ul class="simple">
 <li>old files in the trash bin (files which were deleted before the encryption app was enabled)</li>
 <li>image thumbnails from the gallery app and previews from the files app</li>
 <li>search index from the full text search app</li>
 </ul>
-<p>All this data is stored directly on your ownCloud server, so you don&#8217;t have to worry to expose
+<p>All this data is stored directly on your ownCloud server, so you don&#8217;t have to worry about exposing
 your data to a third party storage provider.</p>
 </div>
 <div class="section" id="decrypt-your-data-again">
 <h2>Decrypt your data again<a class="headerlink" href="#decrypt-your-data-again" title="Permalink to this headline">¶</a></h2>
-<p>If the encryption app was disabled users can decrypt their files again in their
-personal settings. After this was done they can continue to use their ownCloud
-without encryption.</p>
+<p>If the encryption app is disabled after users have already stored encrypted data, users
+will be promted to decrypt their files again in their personal settings. After this is
+done, they can continue to use their ownCloud without encryption.</p>
 </div>
 <div class="section" id="settings">
 <h2>Settings<a class="headerlink" href="#settings" title="Permalink to this headline">¶</a></h2>
-<p>Once the encryption app is enabled you will find some additional settings on
+<p>Once the encryption app is enabled, you will find some additional settings on
 your personal settings page.</p>
 <div class="section" id="recovery-key">
 <h3>Recovery Key<a class="headerlink" href="#recovery-key" title="Permalink to this headline">¶</a></h3>
-<p>If the admin enabled the recovery-key you can decide by your own if you
-want to use this feature for your account. If you enable &#8220;Password recovery&#8221;
+<p>If the admin enabled the recovery-key feature you can decide for yourself if
+you want to use this feature for your account. If you enable &#8220;Password recovery&#8221;
 the admin will be able to read your data with a special password. This allows
-him to recover your files in case of password loss. If the recovery-key is not
-enabled than there is no way to restore your files if you loss your log-in
+him to recover your files in the event you lose your password. If the recovery-key
+is not enabled than there is no way to restore your files if you lose your log-in
 password.</p>
 </div>
 <div class="section" id="change-private-key-password">

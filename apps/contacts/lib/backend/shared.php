@@ -31,7 +31,7 @@ use OCA\Contacts;
 class Shared extends Database {
 
 	public $name = 'shared';
-	public $addressbooks = array();
+	public $addressBooks = array();
 
 	/**
 	 * Returns the list of addressbooks for a specific user.
@@ -46,16 +46,18 @@ class Shared extends Database {
 			'addressbook',
 			Contacts\Share\Addressbook::FORMAT_ADDRESSBOOKS
 		);
-		foreach($maybeSharedAddressBook as $sharedAddressbook) {
-			if(isset($sharedAddressbook['id'])) {
-				$this->addressbooks[] = $this->getAddressBook($sharedAddressbook['id']);
+
+		$this->addressBooks = array();
+
+		foreach ($maybeSharedAddressBook as $sharedAddressbook) {
+
+			if (isset($sharedAddressbook['id'])) {
+				$this->addressBooks[$sharedAddressbook['id']] = $sharedAddressbook;
+				$this->addressBooks[$sharedAddressbook['id']]['backend'] = $this->name;
 			}
 		}
 
-		foreach($this->addressbooks as &$addressBook) {
-			$addressBook['backend'] = $this->name;
-		}
-		return $this->addressbooks;
+		return $this->addressBooks;
 	}
 
 	/**

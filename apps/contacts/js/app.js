@@ -630,7 +630,10 @@ OC.Contacts = OC.Contacts || {
 			$.each(result.contacts, function(idx, contactid) {
 				var contact = self.contacts.findById(contactid);
 
-				contact.removeFromGroup(result.groupname);
+				// Test if valid because there could be stale ids in the tag index.
+				if(contact) {
+					contact.removeFromGroup(result.groupname);
+				}
 			});
 		});
 
@@ -1015,7 +1018,7 @@ OC.Contacts = OC.Contacts || {
 				} else {
 					var contact = self.contacts.findById(self.currentid);
 					if(contact) {
-						contact.close();
+						contact.close(true);
 					}
 				}
 			}
@@ -1393,7 +1396,7 @@ OC.Contacts = OC.Contacts || {
 			if(contact) {
 				// Only show the list element if contact is in current group
 				var showListElement = contact.inGroup(this.groups.nameById(this.currentgroup))
-					|| this.currentgroup === 'all'
+					|| ['all', 'fav', 'uncategorized'].indexOf(this.currentgroup) !== -1
 					|| (this.currentgroup === 'uncategorized' && contact.groups().length === 0);
 				contact.close(showListElement);
 			}
@@ -1535,7 +1538,7 @@ OC.Contacts = OC.Contacts || {
 		if(!this.$cropBoxTmpl) {
 			this.$cropBoxTmpl = $('#cropBoxTemplate');
 		}
-		var $container = $('<div />').appendTo($('body'));
+		var $container = $('<div />').appendTo($('#content'));
 		var url = OC.Router.generate(
 			'contacts_crop_contact_photo',
 			{backend: metadata.backend, addressBookId: metadata.addressBookId, contactId: metadata.contactId, key: tmpkey}

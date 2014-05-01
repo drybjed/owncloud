@@ -119,23 +119,37 @@
 
 	text-align: center;
 	font-weight: bold;
+	color:#fff;
+	background-color:#1d2d44;
 }
+
+#document-title div.logo-wide{
+	float:left;
+	height: 24px;
+	width: 80px;
+	background-size:80px 24px;
+}
+
 #document-title div{
 	position: relative;
 	/*margin-left:-50%;*/
 }
 #document-title>input {
-	height:9px;
+	height:14px;
 	margin: 0;
-	padding-top:4px;
+	padding:3px 6px;
 	width: 300px;
+	font-size: 12px;
+	color:#000;
 }
 
 #odf-close{
+	margin-top:0;
 	float: right;
 }
 
 #odf-invite{
+	margin-top:0;
 	float: left;
 }
 
@@ -230,7 +244,12 @@
     border: 0 none !important;
 }
 
+.memberListButton input{
+	width:46px;
+}
+
 #toolbar {
+	top:30px !important;
 	border-bottom: none !important;
 	padding: 5px 0 0 !important;
 }
@@ -287,4 +306,12 @@ margin-top:-1px;
 
 document p{
 	cursor:auto;
+}
+
+
+/* backward compatibility */
+#document-title .logo-wide {
+	background-image: url(../../../../core/img/logo-wide.svg);
+	width: 147px;
+	height: 32px;
 }

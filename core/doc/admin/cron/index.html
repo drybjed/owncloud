@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>&lt;no title&gt; &mdash; ownCloud Administrators Manual 6.0 documentation</title>
+    <title>Driving Events with Cron &mdash; ownCloud Administrators Manual 6.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -28,6 +28,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/bootstrap.js"></script>
     <link rel="top" title="ownCloud Administrators Manual 6.0 documentation" href="../index.html" />
+    <link rel="next" title="Quota Calculation" href="../quota/index.html" />
+    <link rel="prev" title="Migrating ownCloud Installations" href="../maintenance/migrating.html" />
 <script type="text/javascript">
 (function () {
   /**
@@ -112,10 +114,19 @@
                   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">ownCloud 6.0 Admin Documentation</a></li>
 </ul>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apps/index.html">Apps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Driving Events with Cron</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quota/index.html">Quota Calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sharing_api/index.html">Sharing API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html">The Configuration File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues</a></li>
 </ul>
 
@@ -129,12 +140,36 @@
 				<div class="span9">
 					<div class="page-content">
 						
-  <p><strong>ownCloud cron.php</strong></p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Usage.html">Usage</a></li>
-</ul>
+  <div class="section" id="driving-events-with-cron">
+<h1>Driving Events with Cron<a class="headerlink" href="#driving-events-with-cron" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>ownCloud is written in PHP, and because PHP is a request driven language – in
+other words it runs only when a client takes an action and calls php, and then
+it executes and ends – it does not have a built in CRON process. Instead,
+ownCloud provides <tt class="docutils literal"><span class="pre">cron.php</span></tt>, which is called by the server’s CRON daemon.
+<tt class="docutils literal"><span class="pre">cron.php</span></tt> is an ownCloud internal process that runs various background jobs
+on demand.  It is called by the server cron, and can be set by the
+administrator.</p>
+<p>ownCloud plug-in applications register actions with <tt class="docutils literal"><span class="pre">cron.php</span></tt> automatically to
+take care of typical housekeeping operations, such as garbage collecting of
+temporary files or checking for newly updated files using <tt class="docutils literal"><span class="pre">filescan()</span></tt> for
+externally mounted file systems.</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>The interval at which this script is executed, and thus the ownCloud registered
+actions, can depend on the size of the installation and the load of the system.
+Recommended intervals are 15 or 30 minutes.</p>
+<p>Cron.php needs to be called by the system’s cron daemon and run as the same
+user the web server runs as.</p>
+<p>As an example, on an ordinary Linux distribution, place the following in the
+web server’s user’s crontab:</p>
+<div class="highlight-python"><pre>*/15 * * * * /usr/bin/php -f /srv/http/owncloud/cron.php /dev/null 2&gt;&amp;1</pre>
+</div>
+<p>This will run <tt class="docutils literal"><span class="pre">cron.php</span></tt> every 15 minutes and suppress any warnings or output
+which may be generated.</p>
+</div>
 </div>
 
 

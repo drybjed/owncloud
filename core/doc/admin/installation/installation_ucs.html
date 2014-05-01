@@ -124,7 +124,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="">Univention Corporate Server</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pre-configuration">Pre configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#postconfiguration-optional">Postconfiguration (optional)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#post-configuration-optional">Post configuration (optional)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#using-owncloud">Using ownCloud</a></li>
 </ul>
 </li>
@@ -134,7 +134,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apps/index.html">Apps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cron/index.html">Driving Events with Cron</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quota/index.html">Quota Calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sharing_api/index.html">Sharing API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html">The Configuration File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues</a></li>
 </ul>
 
@@ -193,12 +198,12 @@ assign your required value.</p>
 </tr>
 <tr class="row-odd"><td>owncloud/user/enabled</td>
 <td>0</td>
-<td>Wether a new user is allowed to use ownCloud by default.</td>
+<td>Whether a new user is allowed to use ownCloud by default.</td>
 <td>2012.0.1</td>
 </tr>
 <tr class="row-even"><td>owncloud/group/enabled</td>
 <td>0</td>
-<td>Wether a new group is allowed to be used in ownCloud by default.</td>
+<td>Whether a new group is allowed to be used in ownCloud by default.</td>
 <td>2012.4.0.4</td>
 </tr>
 <tr class="row-odd"><td>owncloud/ldap/base/users</td>
@@ -288,12 +293,12 @@ assign your required value.</p>
 </tr>
 <tr class="row-even"><td>owncloud/join/users/update</td>
 <td>yes</td>
-<td>Wether ownCloud LDAP schema should be applied to existing users</td>
+<td>Whether ownCloud LDAP schema should be applied to existing users</td>
 <td>2012.0.1</td>
 </tr>
 <tr class="row-odd"><td>owncloud/group/enableDomainUsers</td>
 <td>1</td>
-<td>Wether the group “Domain Users” shall be enabled for ownCloud on install</td>
+<td>Whether the group “Domain Users” shall be enabled for ownCloud on install</td>
 <td>2012.4.0.4</td>
 </tr>
 <tr class="row-even"><td>owncloud/join/users/filter</td>
@@ -339,8 +344,8 @@ optional) via command line:</p>
 </div>
 <p>ownCloud will be configured to fully work with LDAP.</p>
 </div>
-<div class="section" id="reinstallation">
-<h3>Reinstallation<a class="headerlink" href="#reinstallation" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="re-installation">
+<h3>Re-installation<a class="headerlink" href="#re-installation" title="Permalink to this headline">¶</a></h3>
 <p>When ownCloud was installed before and uninstalled via AppCenter or via command
 line using apt-get remove, ownCloud can be simply installed again. The old
 configuration will be used again.</p>
@@ -355,8 +360,8 @@ MySQL database &#8220;ownCloud&#8221; using the command line:</p>
 <strong>/var/lib/owncloud</strong> although this is not mandatory.</p>
 </div>
 </div>
-<div class="section" id="postconfiguration-optional">
-<h2>Postconfiguration (optional)<a class="headerlink" href="#postconfiguration-optional" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="post-configuration-optional">
+<h2>Post configuration (optional)<a class="headerlink" href="#post-configuration-optional" title="Permalink to this headline">¶</a></h2>
 <p>There is only one local admin user “owncloudadmin”, you can find his password in
 <cite>/etc/owncloudadmin.secret</cite>. Use this account, if you want to change basic
 ownCloud settings.</p>

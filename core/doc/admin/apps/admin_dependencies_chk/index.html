@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>&lt;no title&gt; &mdash; ownCloud Administrators Manual 6.0 documentation</title>
+    <title>Finding Deployment Dependencies &mdash; ownCloud Administrators Manual 6.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -28,6 +28,9 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/bootstrap.js"></script>
     <link rel="top" title="ownCloud Administrators Manual 6.0 documentation" href="../../index.html" />
+    <link rel="up" title="Apps" href="../index.html" />
+    <link rel="next" title="File Antivirus Engine" href="../files_antivirus/index.html" />
+    <link rel="prev" title="Activity" href="../activity/index.html" />
 <script type="text/javascript">
 (function () {
   /**
@@ -112,10 +115,32 @@
                   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">ownCloud 6.0 Admin Documentation</a></li>
 </ul>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuration</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Apps</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../activity/index.html">Activity</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Finding Deployment Dependencies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utilization">Utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../files_antivirus/index.html">File Antivirus Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../files_encryption/index.html">Encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../files_external/index.html">External storage support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../files_sharing/index.html">Sharing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../files_trashbin/index.html">Deleted Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../files_versions/index.html">Versions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../firstrunwizard/index.html">First Run Wizard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_ldap/index.html">LDAP user and group backend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viewers/index.html">File Viewers</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance/index.html">Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cron/index.html">Driving Events with Cron</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quota/index.html">Quota Calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sharing_api/index.html">Sharing API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config/index.html">The Configuration File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../issues/index.html">Issues</a></li>
 </ul>
 
@@ -129,14 +154,26 @@
 				<div class="span9">
 					<div class="page-content">
 						
-  <p><strong>ownCloud Dependencies</strong></p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Table_of_Contents.html">Table of Contents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Utilization.html">Utilization</a></li>
-</ul>
+  <div class="section" id="finding-deployment-dependencies">
+<h1>Finding Deployment Dependencies<a class="headerlink" href="#finding-deployment-dependencies" title="Permalink to this headline">¶</a></h1>
+<p>The ownCloud Dependencies App provides a list of modules required to run the current setup of ownCloud.
+All of the modules listed should be installed on the base operating system prior to using ownCloud.</p>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>By default, the ownCloud Dependencies App is disabled.
+To enable, navigate to the Apps page and select “ownCloud dependencies info” and enable.</p>
+<img alt="../../_images/10000000000001C9000000AF9C1CE57F.png" src="../../_images/10000000000001C9000000AF9C1CE57F.png" style="width: 4.7602in; height: 1.8228in;" />
+</div>
+<div class="section" id="utilization">
+<h2>Utilization<a class="headerlink" href="#utilization" title="Permalink to this headline">¶</a></h2>
+<p>Once this app is enabled, navigate to the Admin page and scroll to “Dependencies status”.
+This section will show a list of all modules required to execute this ownCloud
+setup as well as what part of ownCloud uses the given module.</p>
+<img alt="../../_images/100000000000013C0000017D4FC6CEF5.png" src="../../_images/100000000000013C0000017D4FC6CEF5.png" style="width: 3.2917in; height: 3.9689in;" />
+<p>Modules in green are required and have been installed.  Modules in red are
+required yet have not been installed.  It is recommended to install these
+modules prior to using ownCloud.</p>
+</div>
 </div>
 
 

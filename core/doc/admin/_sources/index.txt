@@ -54,6 +54,8 @@ This chapter covers ownCloud and web server configuration.
 * :doc:`configuration/configuration_users`
 * :doc:`configuration/configuration_database`
 * :doc:`configuration/auth_ldap`
+* :doc:`cron/index`
+* :doc:`quota/index`
 * :doc:`configuration/custom_mount_config_gui`
 * :doc:`configuration/custom_mount_config`
 * :doc:`configuration/background_jobs`
@@ -70,6 +72,25 @@ This chapter covers ownCloud and web server configuration.
 * :doc:`configuration/configuration_knowledgebase`
 * :doc:`configuration/configuration_logging`
 * :doc:`configuration/configuration_language`
+
+Finally, the chapter :doc:`config/index` details on the switches
+in the ``config.php`` file.
+
+Apps
+====
+This chapter covers individual ownCloud apps.
+
+* :doc:`apps/activity/index`
+* :doc:`apps/admin_dependencies_chk/index`
+* :doc:`apps/files_antivirus/index`
+* :doc:`apps/files_encryption/index`
+* :doc:`apps/files_external/index`
+* :doc:`apps/files_sharing/index`
+* :doc:`apps/files_trashbin/index`
+* :doc:`apps/files_versions/index`
+* :doc:`apps/firstrunwizard/index`
+* :doc:`apps/user_ldap/index`
+* :doc:`apps/viewers/index`
 
 Maintenance
 ===========
